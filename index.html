@@ -1,3 +1,7 @@
+
+Blood pressure tracker · HTML
+Copy
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -20,50 +24,36 @@
 html,body{height:100%;overflow:hidden;background:var(--bg)}
 body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-direction:column}
  
-/* ── OVERLAY ── */
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
 #overlay.show{opacity:1;pointer-events:all}
  
-/* ── SIDEBAR ── */
-.sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:var(--sw);
-  background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;z-index:200;
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
-  padding-top:var(--sti);
-}
-/* Mobile: hidden by default */
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:transform .3s cubic-bezier(.4,0,.2,1);padding-top:var(--sti)}
 @media(max-width:899px){.sidebar{transform:translateX(calc(-1*var(--sw)))}.sidebar.open{transform:translateX(0)}}
-/* Desktop: visible, collapsible */
 @media(min-width:900px){.sidebar.collapsed{transform:translateX(calc(-1*var(--sw)))}}
- 
 .sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
 .logo-icon{font-size:26px;flex-shrink:0}
 .logo-text{font-size:14px;font-weight:700;color:var(--accent2);line-height:1.2}
 .logo-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .nav{padding:10px 8px;flex:1;overflow-y:auto}
-.nav-section{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px}
+.nav-s{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px}
 .nav-item{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);transition:all .15s;margin-bottom:2px;user-select:none}
 .nav-item:active,.nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:rgba(59,130,246,.15);color:var(--accent2)}
 .nav-item .icon{font-size:18px;width:24px;text-align:center}
 .sb-members{padding:8px;border-top:1px solid var(--border)}
-.sb-members-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 10px 8px}
+.sb-ml{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 10px 8px}
 .mb-btn{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;transition:background .15s;margin-bottom:2px}
 .mb-btn:active,.mb-btn:hover{background:var(--surface2)}
 .mb-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .mb-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
  
-/* ── MAIN SHELL ── */
-.main{
-  position:fixed;inset:0;display:flex;flex-direction:column;
-  transition:left .3s cubic-bezier(.4,0,.2,1);
-  padding-top:var(--sti);
-}
+/* MAIN */
+.main{position:fixed;inset:0;display:flex;flex-direction:column;transition:left .3s cubic-bezier(.4,0,.2,1);padding-top:var(--sti)}
 @media(min-width:900px){.main{left:var(--sw)}.main.expanded{left:0}}
 @media(max-width:899px){.main{left:0}}
  
-/* ── TOPBAR ── */
+/* TOPBAR */
 .topbar{height:var(--th);flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
 .tb-menu{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;flex-shrink:0;font-size:18px;transition:background .15s;user-select:none}
 .tb-menu:active,.tb-menu:hover{background:var(--border)}
@@ -73,17 +63,11 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .tb-add{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:24px;color:#fff;border:none;transition:background .15s}
 .tb-add:active,.tb-add:hover{background:var(--accent2)}
  
-/* ── SCROLL AREA ── */
 .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 14px calc(var(--bnh) + var(--sbi) + 12px);-webkit-overflow-scrolling:touch}
 @media(min-width:900px){.content{padding:20px 24px 20px}}
  
-/* ── BOTTOM NAV ── */
-.bottomnav{
-  position:fixed;bottom:0;left:0;right:0;
-  height:calc(var(--bnh) + var(--sbi));padding-bottom:var(--sbi);
-  background:var(--surface);border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-around;z-index:100;
-}
+/* BOTTOM NAV */
+.bottomnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--bnh) + var(--sbi));padding-bottom:var(--sbi);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:100}
 @media(min-width:900px){.bottomnav{display:none!important}}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:6px 0;color:var(--muted);user-select:none;transition:color .15s}
 .bn-item:active{opacity:.6}
@@ -91,32 +75,30 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .bn-icon{font-size:21px;line-height:1}
 .bn-lbl{font-size:10px;font-weight:600}
  
-/* ── VIEWS ── */
-.view{display:none}
-.view.active{display:block}
- 
-/* ── CARDS ── */
+.view{display:none}.view.active{display:block}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
 .card-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
  
-/* ── BP BADGE ── */
+/* BP BADGES */
 .bp-lv{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
-.lv-ok{background:var(--nb);color:var(--normal)}
-.lv-hi{background:var(--eb);color:var(--elevated)}
-.lv-s1{background:var(--s1b);color:var(--stage1)}
-.lv-s2{background:var(--s2b);color:var(--stage2)}
+.lv-ok{background:var(--nb);color:var(--normal)}.lv-hi{background:var(--eb);color:var(--elevated)}
+.lv-s1{background:var(--s1b);color:var(--stage1)}.lv-s2{background:var(--s2b);color:var(--stage2)}
 .lv-cr{background:var(--crb);color:var(--crisis);animation:pulse-cr 1.5s infinite}
 @keyframes pulse-cr{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 5px rgba(220,38,38,0)}}
  
-/* ── MEMBER GRID ── */
+/* MEMBER GRID */
 .mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
-.mcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 4px;cursor:pointer;text-align:center;transition:border-color .15s}
-.mcard:active{transform:scale(.96);border-color:var(--accent)}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 4px;cursor:pointer;text-align:center;transition:all .15s;position:relative}
+.mcard:active{transform:scale(.96)}
+.mcard.blank-card{border-style:dashed;opacity:.45}
+.mcard.blank-card:active{transform:scale(.97);opacity:.7}
 .mav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;margin:0 auto 6px}
-.mname{font-size:11px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mname{font-size:11px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
 .mbp{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px}
+.mcard-edit{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:5px;background:rgba(59,130,246,.18);font-size:10px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;cursor:pointer;border:none;color:var(--accent2)}
+.mcard:hover .mcard-edit{opacity:1}
  
-/* ── FORM ── */
+/* FORM */
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .frow.full{grid-template-columns:1fr}
 .fgrp{display:flex;flex-direction:column;gap:5px}
@@ -126,40 +108,34 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .finput::placeholder{color:var(--muted);font-size:13px;font-family:'Noto Sans TC',sans-serif}
 select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
  
-/* ── PREVIEW ── */
+/* PREVIEW */
 .prev-box{background:var(--surface2);border-radius:12px;padding:12px;margin:10px 0;display:flex;align-items:center;justify-content:space-between}
 .prev-num{font-family:'DM Mono',monospace;font-size:26px;font-weight:700}
 .prev-lbl{font-size:10px;color:var(--muted);margin-top:2px}
  
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Noto Sans TC',sans-serif;transition:all .15s;width:100%;user-select:none}
 .btn:active{transform:scale(.97)}
-.btn-p{background:var(--accent);color:#fff}
-.btn-p:active,.btn-p:hover{background:var(--accent2)}
-.btn-o{background:transparent;color:var(--text);border:1px solid var(--border)}
-.btn-o:active,.btn-o:hover{background:var(--surface2)}
-.btn-d{background:rgba(220,38,38,.12);color:var(--crisis);border:1px solid rgba(220,38,38,.25)}
-.btn-d:active{background:rgba(220,38,38,.22)}
-.btn-sm{font-size:12px;padding:8px 12px;border-radius:8px;width:auto}
+.btn-p{background:var(--accent);color:#fff}.btn-p:active,.btn-p:hover{background:var(--accent2)}
+.btn-o{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-o:active,.btn-o:hover{background:var(--surface2)}
+.btn-d{background:rgba(220,38,38,.12);color:var(--crisis);border:1px solid rgba(220,38,38,.25)}.btn-d:active{background:rgba(220,38,38,.22)}
  
-/* ── RECORDS LIST ── */
+/* RECORD LIST */
 .rec-list{display:flex;flex-direction:column;gap:8px}
-.rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;position:relative}
-.rec-item-left{flex:1;min-width:0}
+.rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px}
+.rec-left{flex:1;min-width:0}
 .rec-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
 .rec-date{font-size:11px;color:var(--muted)}
-.rec-time{font-size:11px;color:var(--muted)}
+.rec-time-lbl{font-size:11px;color:var(--muted)}
 .rec-bp{font-family:'DM Mono',monospace;font-size:20px;font-weight:700}
 .rec-note{font-size:11px;color:var(--muted);margin-top:3px}
-.rec-actions{display:flex;gap:6px;flex-shrink:0}
+.rec-acts{display:flex;gap:6px;flex-shrink:0}
 .icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:15px;transition:background .15s;flex-shrink:0}
 .icon-btn:active{transform:scale(.9)}
-.edit-btn{background:rgba(59,130,246,.12);color:var(--accent)}
-.edit-btn:hover{background:rgba(59,130,246,.22)}
-.del-btn{background:rgba(220,38,38,.1);color:var(--crisis)}
-.del-btn:hover{background:rgba(220,38,38,.2)}
+.edit-btn{background:rgba(59,130,246,.12);color:var(--accent)}.edit-btn:hover{background:rgba(59,130,246,.22)}
+.del-btn{background:rgba(220,38,38,.1);color:var(--crisis)}.del-btn:hover{background:rgba(220,38,38,.2)}
  
-/* ── CALENDAR ── */
+/* CALENDAR */
 .cal-topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .mo-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:18px;flex-shrink:0}
 .mo-btn:active{background:var(--border)}
@@ -167,14 +143,12 @@ select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-hd{text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:5px 0}
 .cal-d{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:1px solid transparent;transition:background .12s;user-select:none}
-.cal-d:active{background:var(--surface2)}
-.cal-d.today{border-color:var(--accent)}
-.cal-d.empty{opacity:0;pointer-events:none}
-.cal-d.selected{background:rgba(59,130,246,.18);border-color:var(--accent)}
+.cal-d:active{background:var(--surface2)}.cal-d.today{border-color:var(--accent)}
+.cal-d.empty{opacity:0;pointer-events:none}.cal-d.selected{background:rgba(59,130,246,.18);border-color:var(--accent)}
 .cal-dn{font-weight:600;line-height:1}
 .cal-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
  
-/* ── STATS ROW ── */
+/* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;position:relative;overflow:hidden;text-align:center}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
@@ -183,12 +157,12 @@ select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
 .stat-val{font-size:20px;font-weight:900;font-family:'DM Mono',monospace;margin:5px 0 3px}
 .stat-desc{font-size:9px;color:var(--muted)}
  
-/* ── CHART ── */
+/* CHART */
 .chart-wrap{height:170px;margin-bottom:8px}
 svg.chart{width:100%;height:100%}
 @media(min-width:640px){.chart-wrap{height:210px}}
  
-/* ── MODAL (bottom sheet on mobile, centered on desktop) ── */
+/* MODAL SHEET */
 .mo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;z-index:300;opacity:0;pointer-events:none;transition:opacity .22s}
 .mo-overlay.open{opacity:1;pointer-events:all}
 .mo-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:18px 18px calc(18px + var(--sbi));width:100%;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
@@ -205,7 +179,25 @@ svg.chart{width:100%;height:100%}
   .mo-handle{display:none}
 }
  
-/* ── CONFIRM DIALOG ── */
+/* EMOJI PICKER */
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
+.emoji-opt{width:100%;aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;background:var(--surface2);border:2px solid transparent;transition:all .15s}
+.emoji-opt:active{transform:scale(.9)}
+.emoji-opt.selected{border-color:var(--accent);background:rgba(59,130,246,.15)}
+ 
+/* COLOR PICKER */
+.color-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
+.color-opt{width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;box-sizing:border-box}
+.color-opt:active{transform:scale(.9)}
+.color-opt.selected{border-color:var(--text)}
+ 
+/* MEMBER PREVIEW */
+.member-preview{display:flex;align-items:center;gap:14px;background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px}
+.mp-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.mp-name{font-size:18px;font-weight:800}
+.mp-sub{font-size:11px;color:var(--muted);margin-top:2px}
+ 
+/* CONFIRM */
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:400;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
 .confirm-overlay.open{opacity:1;pointer-events:all}
 .confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;max-width:320px;width:100%;transform:scale(.92);transition:transform .2s}
@@ -214,26 +206,21 @@ svg.chart{width:100%;height:100%}
 .confirm-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
 .confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
  
-/* ── TOAST ── */
+/* TOAST */
 .toast{position:fixed;bottom:calc(var(--bnh) + var(--sbi) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:rgba(17,24,39,.96);border:1px solid var(--border);border-radius:12px;padding:11px 20px;font-size:13px;font-weight:600;z-index:500;opacity:0;transition:all .25s;white-space:nowrap;backdrop-filter:blur(8px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(min-width:900px){.toast{bottom:20px}}
  
-/* ── LEGEND ── */
+/* LEGEND */
 .bp-legend{display:flex;flex-direction:column;gap:8px}
 .leg-item{border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px}
 .leg-main{flex:1}
 .leg-name{font-size:13px;font-weight:700}
 .leg-range{font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;opacity:.85}
  
-/* ── DESKTOP grid ── */
 @media(min-width:640px){
-  .mgrid{gap:12px}
-  .mav{width:46px;height:46px;font-size:20px}
-  .mbp{font-size:14px}
-  .mname{font-size:12px}
-  .stats-row{gap:12px}
-  .stat-val{font-size:24px}
+  .mgrid{gap:12px}.mav{width:46px;height:46px;font-size:20px}.mbp{font-size:14px}.mname{font-size:12px}
+  .stats-row{gap:12px}.stat-val{font-size:24px}
 }
 </style>
 </head>
@@ -241,17 +228,14 @@ svg.chart{width:100%;height:100%}
  
 <div id="overlay" onclick="closeSidebar()"></div>
  
-<!-- ── SIDEBAR ── -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">🫀</div>
-    <div>
-      <div class="logo-text">血壓健康管理</div>
-      <div class="logo-sub">家庭健康監測系統</div>
-    </div>
+    <div><div class="logo-text">血壓健康管理</div><div class="logo-sub">家庭健康監測系統</div></div>
   </div>
   <nav class="nav">
-    <div class="nav-section">功能選單</div>
+    <div class="nav-s">功能選單</div>
     <div class="nav-item active" onclick="showView('dashboard')"><span class="icon">📊</span>總覽儀表板</div>
     <div class="nav-item" onclick="showView('record')"><span class="icon">📝</span>記錄血壓</div>
     <div class="nav-item" onclick="showView('calendar')"><span class="icon">📅</span>日曆檢視</div>
@@ -259,15 +243,15 @@ svg.chart{width:100%;height:100%}
     <div class="nav-item" onclick="showView('guide')"><span class="icon">ℹ️</span>血壓指南</div>
   </nav>
   <div class="sb-members">
-    <div class="sb-members-lbl">成員</div>
+    <div class="sb-ml">成員</div>
     <div id="sidebar-members"></div>
   </div>
 </aside>
  
-<!-- ── MAIN ── -->
+<!-- MAIN -->
 <div class="main" id="main">
   <div class="topbar">
-    <div class="tb-menu" id="menu-btn" onclick="handleMenuBtn()">☰</div>
+    <div class="tb-menu" onclick="handleMenuBtn()">☰</div>
     <div class="tb-info">
       <div class="tb-title" id="tb-title">總覽儀表板</div>
       <div class="tb-sub" id="tb-sub">家庭血壓健康監測</div>
@@ -280,14 +264,8 @@ svg.chart{width:100%;height:100%}
     <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
       <div class="mgrid" id="members-grid"></div>
-      <div class="card">
-        <div class="card-title">📊 今日概況</div>
-        <div id="today-summary"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">⚠️ 警示</div>
-        <div id="alerts-panel"></div>
-      </div>
+      <div class="card"><div class="card-title">📊 今日概況</div><div id="today-summary"></div></div>
+      <div class="card"><div class="card-title">⚠️ 警示</div><div id="alerts-panel"></div></div>
     </div>
  
     <!-- RECORD -->
@@ -313,10 +291,7 @@ svg.chart{width:100%;height:100%}
         </div>
         <button class="btn btn-p" onclick="saveRecord()">儲存記錄</button>
       </div>
-      <div class="card">
-        <div class="card-title">📋 所有記錄</div>
-        <div id="recent-records"></div>
-      </div>
+      <div class="card"><div class="card-title">📋 所有記錄</div><div id="recent-records"></div></div>
     </div>
  
     <!-- CALENDAR -->
@@ -385,11 +360,11 @@ svg.chart{width:100%;height:100%}
       </div>
     </div>
  
-  </div><!-- /content -->
-</div><!-- /main -->
+  </div>
+</div>
  
-<!-- ── BOTTOM NAV ── -->
-<div class="bottomnav" id="bottomnav">
+<!-- BOTTOM NAV -->
+<div class="bottomnav">
   <div class="bn-item active" onclick="showView('dashboard')"><div class="bn-icon">📊</div><div class="bn-lbl">總覽</div></div>
   <div class="bn-item" onclick="showView('record')"><div class="bn-icon">📝</div><div class="bn-lbl">記錄</div></div>
   <div class="bn-item" onclick="showView('calendar')"><div class="bn-icon">📅</div><div class="bn-lbl">日曆</div></div>
@@ -397,9 +372,9 @@ svg.chart{width:100%;height:100%}
   <div class="bn-item" onclick="showView('guide')"><div class="bn-icon">ℹ️</div><div class="bn-lbl">指南</div></div>
 </div>
  
-<!-- ── ADD / EDIT MODAL ── -->
-<div class="mo-overlay" id="mo-overlay" onclick="handleOverlayClick(event)">
-  <div class="mo-sheet" id="mo-sheet">
+<!-- BP RECORD MODAL -->
+<div class="mo-overlay" id="mo-overlay" onclick="handleOverlayClick(event,'mo-overlay')">
+  <div class="mo-sheet">
     <div class="mo-handle"></div>
     <div class="mo-title" id="mo-title">新增血壓記錄</div>
     <div class="mo-sub" id="mo-sub">請填寫量測數據</div>
@@ -421,20 +396,55 @@ svg.chart{width:100%;height:100%}
       <div id="m-prev-lv"></div>
     </div>
     <div id="mo-btns" class="mo-actions">
-      <button class="btn btn-o" onclick="closeModal()">取消</button>
+      <button class="btn btn-o" onclick="closeModal('mo-overlay')">取消</button>
       <button class="btn btn-p" id="mo-save-btn" onclick="saveModal()">儲存</button>
     </div>
   </div>
 </div>
  
-<!-- ── CONFIRM DIALOG ── -->
+<!-- MEMBER MODAL -->
+<div class="mo-overlay" id="mm-overlay" onclick="handleOverlayClick(event,'mm-overlay')">
+  <div class="mo-sheet">
+    <div class="mo-handle"></div>
+    <div class="mo-title" id="mm-title">新增成員</div>
+    <div class="mo-sub" id="mm-sub">設定成員名稱、頭像與顏色</div>
+ 
+    <div class="member-preview" id="mm-preview">
+      <div class="mp-av" id="mm-prev-av">👤</div>
+      <div><div class="mp-name" id="mm-prev-name">新成員</div><div class="mp-sub" id="mm-prev-sub">預覽</div></div>
+    </div>
+ 
+    <div class="frow full" style="margin-bottom:12px">
+      <div class="fgrp">
+        <div class="flbl">姓名</div>
+        <input type="text" class="finput" id="mm-name" placeholder="例：爸爸、奶奶..." maxlength="6" oninput="updateMemberPreview()">
+      </div>
+    </div>
+ 
+    <div class="flbl" style="margin-bottom:6px">選擇頭像</div>
+    <div class="emoji-grid" id="emoji-grid"></div>
+ 
+    <div class="flbl" style="margin:14px 0 6px">選擇顏色</div>
+    <div class="color-grid" id="color-grid"></div>
+ 
+    <div class="mo-actions" id="mm-btns">
+      <button class="btn btn-o" onclick="closeModal('mm-overlay')">取消</button>
+      <button class="btn btn-p" onclick="saveMember()">儲存成員</button>
+    </div>
+    <div id="mm-del-wrap" style="margin-top:10px;display:none">
+      <button class="btn btn-d" onclick="askDeleteMember()">刪除此成員</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="conf-overlay">
   <div class="confirm-box">
-    <div class="confirm-title">確認刪除</div>
-    <div class="confirm-msg" id="conf-msg">確定要刪除這筆記錄嗎？此動作無法復原。</div>
+    <div class="confirm-title" id="conf-title">確認刪除</div>
+    <div class="confirm-msg" id="conf-msg"></div>
     <div class="confirm-btns">
       <button class="btn btn-o" onclick="closeConfirm()">取消</button>
-      <button class="btn btn-d" onclick="confirmDelete()">刪除</button>
+      <button class="btn btn-d" id="conf-ok-btn" onclick="confirmAction()">刪除</button>
     </div>
   </div>
 </div>
@@ -442,46 +452,61 @@ svg.chart{width:100%;height:100%}
 <div class="toast" id="toast"></div>
  
 <script>
-/* ─── DATA ─── */
-const MEMBERS=[
-  {id:1,name:'爸爸',emoji:'👨',color:'#3b82f6',bg:'rgba(59,130,246,.2)'},
-  {id:2,name:'媽媽',emoji:'👩',color:'#ec4899',bg:'rgba(236,72,153,.2)'},
-  {id:3,name:'待新增',emoji:'➕',color:'#374151',bg:'rgba(55,65,81,.12)',blank:true},
-  {id:4,name:'待新增',emoji:'➕',color:'#374151',bg:'rgba(55,65,81,.12)',blank:true},
-  {id:5,name:'待新增',emoji:'➕',color:'#374151',bg:'rgba(55,65,81,.12)',blank:true},
+/* ═══ CONSTANTS ═══ */
+const EMOJIS=['👨','👩','👴','👵','👦','👧','🧑','👶','🧓','🧔','👱','🙎','🧑‍⚕️','🧑‍🦳','🧑‍🦲','😊'];
+const COLORS=[
+  {c:'#3b82f6',bg:'rgba(59,130,246,.22)'},{c:'#ec4899',bg:'rgba(236,72,153,.22)'},
+  {c:'#f97316',bg:'rgba(249,115,22,.22)'},{c:'#a78bfa',bg:'rgba(167,139,250,.22)'},
+  {c:'#22c55e',bg:'rgba(34,197,94,.22)'}, {c:'#eab308',bg:'rgba(234,179,8,.22)'},
+  {c:'#ef4444',bg:'rgba(239,68,68,.22)'}, {c:'#06b6d4',bg:'rgba(6,182,212,.22)'},
 ];
-const today=new Date();
-let records=JSON.parse(localStorage.getItem('bp_v3')||'[]');
-localStorage.removeItem('bp_records');localStorage.removeItem('bp_records_v2');
-let nextId=records.reduce((m,r)=>Math.max(m,r.id),0)+1;
-let calYear=today.getFullYear(),calMonth=today.getMonth(),calMemberId=1,activeView='dashboard';
-let editingId=null,pendingDeleteId=null;
-function save(){localStorage.setItem('bp_v3',JSON.stringify(records));}
+const MAX_MEMBERS=5;
+const TODAY=new Date();
+const TODAYSTR=TODAY.toISOString().split('T')[0];
  
-/* ─── BP CLASSIFY ─── */
+/* ═══ STATE ═══ */
+let members=JSON.parse(localStorage.getItem('bp_members')||'null')||[
+  {id:1,name:'爸爸',emoji:'👨',color:'#3b82f6',bg:'rgba(59,130,246,.22)'},
+  {id:2,name:'媽媽',emoji:'👩',color:'#ec4899',bg:'rgba(236,72,153,.22)'},
+];
+let records=JSON.parse(localStorage.getItem('bp_v3')||'[]');
+// clean up old keys
+['bp_records','bp_records_v2'].forEach(k=>localStorage.removeItem(k));
+ 
+let nextMId=members.reduce((m,x)=>Math.max(m,x.id),0)+1;
+let nextRId=records.reduce((m,r)=>Math.max(m,r.id),0)+1;
+let calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calMemberId=members[0]?.id||1;
+let activeView='dashboard';
+let editingRecId=null,pendingDeleteId=null,pendingDeleteType=null;
+let editingMemberId=null,pickedEmoji=EMOJIS[0],pickedColor=COLORS[0];
+ 
+function saveMembers(){localStorage.setItem('bp_members',JSON.stringify(members));}
+function saveRecords(){localStorage.setItem('bp_v3',JSON.stringify(records));}
+ 
+/* ═══ BP CLASSIFY ═══ */
 function cl(sys,dia){
   if(sys>180||dia>120)return{label:'高血壓危險期',cls:'lv-cr',color:'var(--crisis)',sev:4};
   if(sys>=140||dia>=90)return{label:'高血壓 第二期',cls:'lv-s2',color:'var(--stage2)',sev:3};
   if(sys>=130||dia>=80)return{label:'高血壓 第一期',cls:'lv-s1',color:'var(--stage1)',sev:2};
-  if(sys>=120&&dia<80)return{label:'偏高血壓',cls:'lv-hi',color:'var(--elevated)',sev:1};
+  if(sys>=120&&dia<80) return{label:'偏高血壓',cls:'lv-hi',color:'var(--elevated)',sev:1};
   return{label:'正常',cls:'lv-ok',color:'var(--normal)',sev:0};
 }
 function scCard(sev){return['sc-ok','sc-hi','sc-s1','sc-s2','sc-cr'][sev]||'sc-ok';}
+function fallbackM(){return{emoji:'?',name:'未知',bg:'rgba(100,100,100,.15)',color:'var(--muted)'};}
  
-/* ─── SIDEBAR ─── */
+/* ═══ SIDEBAR ═══ */
 let sidebarOpen=false,sidebarCollapsed=false;
 function handleMenuBtn(){window.innerWidth>=900?toggleDesktop():toggleMobile();}
 function toggleMobile(){sidebarOpen?closeSidebar():openSidebar();}
 function openSidebar(){sidebarOpen=true;document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show');}
 function closeSidebar(){sidebarOpen=false;document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
 function toggleDesktop(){
-  const sb=document.getElementById('sidebar'),mn=document.getElementById('main');
   sidebarCollapsed=!sidebarCollapsed;
-  sb.classList.toggle('collapsed',sidebarCollapsed);
-  mn.classList.toggle('expanded',sidebarCollapsed);
+  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
+  document.getElementById('main').classList.toggle('expanded',sidebarCollapsed);
 }
  
-/* ─── VIEWS ─── */
+/* ═══ VIEWS ═══ */
 const VIEW_TITLES={dashboard:['總覽儀表板','家庭血壓健康監測'],record:['記錄血壓','新增血壓數據'],calendar:['日曆檢視','按日期瀏覽記錄'],summary:['趨勢分析','血壓統計與趨勢'],guide:['血壓指南','分級與量測說明']};
 function showView(v){
   activeView=v;
@@ -502,75 +527,103 @@ function showView(v){
   if(v==='summary')renderSummary();
 }
  
-/* ─── SIDEBAR MEMBERS ─── */
+/* ═══ SIDEBAR MEMBERS ═══ */
 function renderSidebarMembers(){
-  document.getElementById('sidebar-members').innerHTML=MEMBERS.map(m=>{
-    if(m.blank)return`<div class="mb-btn" style="opacity:.3;cursor:default"><div class="mb-av" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div style="font-size:12px;color:var(--muted)">${m.name}</div></div>`;
+  const el=document.getElementById('sidebar-members');
+  let html=members.map(m=>{
     const last=[...records].filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
     let badge='';
-    if(last){const c=cl(last.sys,last.dia);const cols={'lv-ok':'var(--normal)','lv-hi':'var(--elevated)','lv-s1':'var(--stage1)','lv-s2':'var(--stage2)','lv-cr':'var(--crisis)'};badge=`<span class="mb-badge" style="background:${cols[c.cls]}22;color:${cols[c.cls]}">${last.sys}/${last.dia}</span>`;}
-    return`<div class="mb-btn" onclick="selectMember(${m.id})"><div class="mb-av" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div style="font-size:13px">${m.name}</div>${badge}</div>`;
+    if(last){const c=cl(last.sys,last.dia);const cols={lv_ok:'var(--normal)',lv_hi:'var(--elevated)',lv_s1:'var(--stage1)',lv_s2:'var(--stage2)',lv_cr:'var(--crisis)'};const col=cols[c.cls.replace('-','_')]||c.color;badge=`<span class="mb-badge" style="background:${col}22;color:${col}">${last.sys}/${last.dia}</span>`;}
+    return`<div class="mb-btn" onclick="selectMember(${m.id})"><div class="mb-av" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div style="font-size:13px;flex:1">${m.name}</div>${badge}</div>`;
   }).join('');
+  if(members.length<MAX_MEMBERS) html+=`<div class="mb-btn" onclick="openMemberModal(null)" style="color:var(--muted);border:1px dashed var(--border);border-radius:8px;margin-top:4px"><div class="mb-av" style="background:var(--surface2);color:var(--muted)">➕</div><div style="font-size:12px">新增成員</div></div>`;
+  el.innerHTML=html;
 }
-function selectMember(id){calMemberId=id;showView('calendar');document.getElementById('cal-member').value=id;renderCalendar();}
+function selectMember(id){calMemberId=id;showView('calendar');const s=document.getElementById('cal-member');if(s)s.value=id;renderCalendar();}
  
-/* ─── MEMBER SELECT POPULATE ─── */
-function popSel(id){const s=document.getElementById(id);if(!s)return;s.innerHTML=MEMBERS.filter(m=>!m.blank).map(m=>`<option value="${m.id}">${m.emoji} ${m.name}</option>`).join('');}
+/* ═══ MEMBER SELECT POPULATE ═══ */
+function popSel(id){
+  const s=document.getElementById(id);if(!s)return;
+  const prev=s.value;
+  s.innerHTML=members.map(m=>`<option value="${m.id}">${m.emoji} ${m.name}</option>`).join('');
+  if(prev&&s.querySelector('option[value="'+prev+'"]'))s.value=prev;
+}
  
-/* ─── DASHBOARD ─── */
+/* ═══ DASHBOARD ═══ */
 function renderDash(){
-  document.getElementById('members-grid').innerHTML=MEMBERS.map(m=>{
-    if(m.blank)return`<div class="mcard" style="opacity:.28;border-style:dashed;cursor:default"><div class="mav" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div class="mname" style="color:var(--muted)">${m.name}</div></div>`;
+  // Member cards: real members + blank slots up to MAX_MEMBERS
+  let html=members.map(m=>{
     const recs=[...records].filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date));
     const last=recs[0];let bp='—',lv='';
     if(last){bp=`${last.sys}/${last.dia}`;const c=cl(last.sys,last.dia);lv=`<span class="bp-lv ${c.cls}" style="font-size:9px">${c.label}</span>`;}
-    return`<div class="mcard" onclick="selectMember(${m.id})"><div class="mav" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div class="mname">${m.name}</div><div class="mbp" style="color:${m.color}">${bp}</div>${lv}</div>`;
+    return`<div class="mcard" onclick="selectMember(${m.id})" title="${m.name} 的記錄">
+      <button class="mcard-edit" onclick="event.stopPropagation();openMemberModal(${m.id})" title="編輯成員">✏️</button>
+      <div class="mav" style="background:${m.bg};color:${m.color}">${m.emoji}</div>
+      <div class="mname">${m.name}</div>
+      <div class="mbp" style="color:${m.color}">${bp}</div>${lv}
+    </div>`;
   }).join('');
+  // Blank add slots
+  for(let i=members.length;i<MAX_MEMBERS;i++){
+    html+=`<div class="mcard blank-card" onclick="openMemberModal(null)" title="新增成員">
+      <div class="mav" style="background:var(--surface2);color:var(--muted)">➕</div>
+      <div class="mname" style="color:var(--muted);font-size:10px">新增成員</div>
+    </div>`;
+  }
+  document.getElementById('members-grid').innerHTML=html;
  
-  const ts=today.toISOString().split('T')[0];
-  const tr=records.filter(r=>r.date===ts);
+  // Today summary
+  const tr=records.filter(r=>r.date===TODAYSTR);
   const se=document.getElementById('today-summary');
   se.innerHTML=!tr.length?`<div style="color:var(--muted);font-size:13px;padding:6px 0">今日尚無記錄</div>`:
-    tr.map(r=>{const m=MEMBERS.find(x=>x.id===r.memberId)||{emoji:'?',name:'未知',bg:'rgba(100,100,100,.2)',color:'var(--muted)'};const c=cl(r.sys,r.dia);return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div class="mb-av" style="background:${m.bg};color:${m.color};width:32px;height:32px;font-size:13px">${m.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${m.name}</div><div style="color:var(--muted);font-size:11px">${r.time}${r.note?' · '+r.note:''}</div></div><div style="font-family:'DM Mono',monospace;font-weight:700;font-size:15px">${r.sys}/${r.dia}</div><span class="bp-lv ${c.cls}">${c.label}</span></div>`;}).join('');
+    tr.map(r=>{const m=members.find(x=>x.id===r.memberId)||fallbackM();const c=cl(r.sys,r.dia);
+      return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div class="mb-av" style="background:${m.bg};color:${m.color};width:32px;height:32px;font-size:13px">${m.emoji}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:13px">${m.name}</div><div style="color:var(--muted);font-size:11px">${r.time}${r.note?' · '+r.note:''}</div></div>
+        <div style="font-family:'DM Mono',monospace;font-weight:700;font-size:15px">${r.sys}/${r.dia}</div>
+        <span class="bp-lv ${c.cls}">${c.label}</span>
+      </div>`;}).join('');
  
+  // Alerts
   const ae=document.getElementById('alerts-panel');
   const warns=[];
-  MEMBERS.filter(m=>!m.blank).forEach(m=>{const recs=[...records].filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date));if(!recs.length)return;const last=recs[0];const c=cl(last.sys,last.dia);if(c.sev>=3)warns.push({m,last,c});});
+  members.forEach(m=>{const recs=[...records].filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date));if(!recs.length)return;const last=recs[0];const c=cl(last.sys,last.dia);if(c.sev>=3)warns.push({m,last,c});});
   ae.innerHTML=!warns.length?
     `<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--nb);border-radius:10px;font-size:13px;color:var(--normal)">✅ 所有成員血壓均在可接受範圍內</div>`:
-    warns.map(w=>`<div style="padding:12px;background:var(--crb);border:1px solid rgba(220,38,38,.3);border-radius:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span>${w.m.emoji}</span><span style="font-weight:700;font-size:13px">${w.m.name}</span><span class="bp-lv ${w.c.cls}">${w.c.label}</span></div><div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--crisis)">${w.last.sys}/${w.last.dia} mmHg</div>${w.c.sev===4?'<div style="font-size:12px;color:var(--crisis);margin-top:5px;font-weight:700">⚠️ 請立即諮詢醫師！</div>':''}</div>`).join('');
+    warns.map(w=>`<div style="padding:12px;background:var(--crb);border:1px solid rgba(220,38,38,.3);border-radius:10px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span>${w.m.emoji}</span><span style="font-weight:700;font-size:13px">${w.m.name}</span><span class="bp-lv ${w.c.cls}">${w.c.label}</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--crisis)">${w.last.sys}/${w.last.dia} mmHg</div>
+      ${w.c.sev===4?'<div style="font-size:12px;color:var(--crisis);margin-top:5px;font-weight:700">⚠️ 請立即諮詢醫師！</div>':''}
+    </div>`).join('');
 }
  
-/* ─── RECORD VIEW ─── */
+/* ═══ RECORD VIEW ═══ */
 function renderRecordView(){
   popSel('rec-member');
-  document.getElementById('rec-date').value=today.toISOString().split('T')[0];
+  document.getElementById('rec-date').value=TODAYSTR;
   renderRecList();
 }
 function renderRecList(){
   const el=document.getElementById('recent-records');
   const sorted=[...records].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
   if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:10px">尚無記錄</div>';return;}
-  el.innerHTML=`<div class="rec-list">${sorted.map(r=>{
-    const m=MEMBERS.find(x=>x.id===r.memberId)||{emoji:'?',name:'未知',bg:'rgba(100,100,100,.2)',color:'var(--muted)'};const c=cl(r.sys,r.dia);
-    return`<div class="rec-item">
-      <div class="rec-item-left">
-        <div class="rec-meta">
-          <div class="mb-av" style="background:${m.bg};color:${m.color};width:26px;height:26px;font-size:12px;flex-shrink:0">${m.emoji}</div>
-          <span style="font-weight:700;font-size:13px">${m.name}</span>
-          <span class="rec-date">${r.date.slice(5)}</span>
-          <span class="rec-time">${r.time}</span>
-          <span class="bp-lv ${c.cls}">${c.label}</span>
-        </div>
-        <div class="rec-bp" style="color:${c.color}">${r.sys}<span style="color:var(--muted);font-size:14px">/</span>${r.dia} <span style="font-size:12px;color:var(--muted);font-family:'Noto Sans TC',sans-serif">mmHg${r.pulse?' · ♥ '+r.pulse:''}</span></div>
-        ${r.note?`<div class="rec-note">📝 ${r.note}</div>`:''}
-      </div>
-      <div class="rec-actions">
-        <button class="icon-btn edit-btn" onclick="openEditModal(${r.id})" title="編輯">✏️</button>
-        <button class="icon-btn del-btn" onclick="askDelete(${r.id})" title="刪除">🗑️</button>
-      </div>
-    </div>`;
-  }).join('')}</div>`;
+  el.innerHTML=`<div class="rec-list">${sorted.map(r=>recItemHTML(r,true)).join('')}</div>`;
+}
+function recItemHTML(r,showMember){
+  const m=members.find(x=>x.id===r.memberId)||fallbackM();
+  const c=cl(r.sys,r.dia);
+  const memberTag=showMember?`<div class="mb-av" style="background:${m.bg};color:${m.color};width:22px;height:22px;font-size:11px;flex-shrink:0">${m.emoji}</div><span style="font-weight:700;font-size:12px">${m.name}</span>`:'';
+  return`<div class="rec-item">
+    <div class="rec-left">
+      <div class="rec-meta">${memberTag}<span class="rec-date">${r.date.slice(5)}</span><span class="rec-time-lbl">${r.time}</span><span class="bp-lv ${c.cls}">${c.label}</span></div>
+      <div class="rec-bp" style="color:${c.color}">${r.sys}<span style="color:var(--muted);font-size:14px">/</span>${r.dia} <span style="font-size:12px;color:var(--muted);font-family:'Noto Sans TC',sans-serif">mmHg${r.pulse?' · ♥ '+r.pulse:''}</span></div>
+      ${r.note?`<div class="rec-note">📝 ${r.note}</div>`:''}
+    </div>
+    <div class="rec-acts">
+      <button class="icon-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button>
+      <button class="icon-btn del-btn" onclick="askDeleteRecord(${r.id})">🗑️</button>
+    </div>
+  </div>`;
 }
 function saveRecord(){
   const memberId=parseInt(document.getElementById('rec-member').value);
@@ -581,25 +634,27 @@ function saveRecord(){
   const time=document.getElementById('rec-time').value;
   const note=document.getElementById('rec-note').value.trim();
   if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
-  records.push({id:nextId++,memberId,date,sys,dia,pulse,time,note});
-  save();
+  records.push({id:nextRId++,memberId,date,sys,dia,pulse,time,note});
+  saveRecords();
   ['rec-sys','rec-dia','rec-pulse','rec-note'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('rec-preview').style.display='none';
   renderRecList();renderSidebarMembers();showToast('✅ 記錄已儲存');
 }
+// Live preview in record form
+document.getElementById('rec-sys').addEventListener('input',updateRecPrev);
+document.getElementById('rec-dia').addEventListener('input',updateRecPrev);
 function updateRecPrev(){
   const sys=parseInt(document.getElementById('rec-sys').value),dia=parseInt(document.getElementById('rec-dia').value);
   if(!isNaN(sys)&&!isNaN(dia)){const c=cl(sys,dia);document.getElementById('prev-nums').textContent=`${sys} / ${dia}`;document.getElementById('prev-level').innerHTML=`<span class="bp-lv ${c.cls}">${c.label}</span>`;document.getElementById('rec-preview').style.display='flex';}
   else document.getElementById('rec-preview').style.display='none';
 }
-document.getElementById('rec-sys').addEventListener('input',updateRecPrev);
-document.getElementById('rec-dia').addEventListener('input',updateRecPrev);
  
-/* ─── MODAL (Add / Edit) ─── */
-function openAddModal(){
-  editingId=null;
+/* ═══ BP RECORD MODAL ═══ */
+function openAddModal(presetMemberId){
+  editingRecId=null;
   popSel('m-member');
-  document.getElementById('m-date').value=today.toISOString().split('T')[0];
+  if(presetMemberId)document.getElementById('m-member').value=presetMemberId;
+  document.getElementById('m-date').value=TODAYSTR;
   ['m-sys','m-dia','m-pulse','m-note'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('m-time').value='早晨';
   document.getElementById('m-preview').style.display='none';
@@ -611,7 +666,7 @@ function openAddModal(){
 }
 function openEditModal(id){
   const r=records.find(x=>x.id===id);if(!r)return;
-  editingId=id;
+  editingRecId=id;
   popSel('m-member');
   document.getElementById('m-member').value=r.memberId;
   document.getElementById('m-date').value=r.date;
@@ -627,8 +682,8 @@ function openEditModal(id){
   document.getElementById('mo-save-btn').textContent='儲存修改';
   document.getElementById('mo-overlay').classList.add('open');
 }
-function closeModal(){document.getElementById('mo-overlay').classList.remove('open');editingId=null;}
-function handleOverlayClick(e){if(e.target===document.getElementById('mo-overlay'))closeModal();}
+function closeModal(id){document.getElementById(id).classList.remove('open');editingRecId=null;}
+function handleOverlayClick(e,id){if(e.target===document.getElementById(id))closeModal(id);}
 function updatePrev(){
   const sys=parseInt(document.getElementById('m-sys').value),dia=parseInt(document.getElementById('m-dia').value);
   if(!isNaN(sys)&&!isNaN(dia)){const c=cl(sys,dia);document.getElementById('m-prev-num').textContent=`${sys} / ${dia}`;document.getElementById('m-prev-lv').innerHTML=`<span class="bp-lv ${c.cls}">${c.label}</span>`;document.getElementById('m-preview').style.display='flex';}
@@ -643,50 +698,131 @@ function saveModal(){
   const time=document.getElementById('m-time').value;
   const note=document.getElementById('m-note').value.trim();
   if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
-  if(editingId!==null){
-    const idx=records.findIndex(r=>r.id===editingId);
-    if(idx>-1)records[idx]={id:editingId,memberId,date,sys,dia,pulse,time,note};
+  if(editingRecId!==null){
+    const idx=records.findIndex(r=>r.id===editingRecId);
+    if(idx>-1)records[idx]={id:editingRecId,memberId,date,sys,dia,pulse,time,note};
     showToast('✅ 記錄已更新');
-  } else {
-    records.push({id:nextId++,memberId,date,sys,dia,pulse,time,note});
+  }else{
+    records.push({id:nextRId++,memberId,date,sys,dia,pulse,time,note});
     showToast('✅ 記錄已儲存');
   }
-  save();closeModal();renderSidebarMembers();
+  saveRecords();closeModal('mo-overlay');renderSidebarMembers();
   if(activeView==='dashboard')renderDash();
   if(activeView==='record')renderRecList();
   if(activeView==='calendar')renderCalendar();
   if(activeView==='summary')renderSummary();
 }
  
-/* ─── DELETE ─── */
-function askDelete(id){
-  const r=records.find(x=>x.id===id);if(!r)return;
-  const m=MEMBERS.find(x=>x.id===r.memberId)||{name:'未知'};
-  pendingDeleteId=id;
-  document.getElementById('conf-msg').textContent=`確定要刪除 ${m.name} 在 ${r.date} ${r.time} 的記錄（${r.sys}/${r.dia} mmHg）？此動作無法復原。`;
+/* ═══ MEMBER MODAL ═══ */
+function buildEmojiGrid(){
+  document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>`<div class="emoji-opt${e===pickedEmoji?' selected':''}" onclick="pickEmoji('${e}')">${e}</div>`).join('');
+}
+function buildColorGrid(){
+  document.getElementById('color-grid').innerHTML=COLORS.map((col,i)=>`<div class="color-opt${col.c===pickedColor.c?' selected':''}" style="background:${col.c}" onclick="pickColor(${i})"></div>`).join('');
+}
+function pickEmoji(e){pickedEmoji=e;buildEmojiGrid();updateMemberPreview();}
+function pickColor(i){pickedColor=COLORS[i];buildColorGrid();updateMemberPreview();}
+function updateMemberPreview(){
+  const name=document.getElementById('mm-name').value.trim()||'新成員';
+  document.getElementById('mm-prev-av').textContent=pickedEmoji;
+  document.getElementById('mm-prev-av').style.background=pickedColor.bg;
+  document.getElementById('mm-prev-av').style.color=pickedColor.c;
+  document.getElementById('mm-prev-name').textContent=name;
+}
+function openMemberModal(id){
+  editingMemberId=id;
+  if(id!==null){
+    const m=members.find(x=>x.id===id);if(!m)return;
+    pickedEmoji=m.emoji;
+    pickedColor=COLORS.find(c=>c.c===m.color)||COLORS[0];
+    document.getElementById('mm-name').value=m.name;
+    document.getElementById('mm-title').textContent='編輯成員';
+    document.getElementById('mm-sub').textContent='修改成員資料';
+    document.getElementById('mm-del-wrap').style.display='block';
+  }else{
+    if(members.length>=MAX_MEMBERS){showToast('⚠️ 最多只能有 5 位成員');return;}
+    pickedEmoji=EMOJIS[0];pickedColor=COLORS[0];
+    document.getElementById('mm-name').value='';
+    document.getElementById('mm-title').textContent='新增成員';
+    document.getElementById('mm-sub').textContent='設定成員名稱、頭像與顏色';
+    document.getElementById('mm-del-wrap').style.display='none';
+  }
+  buildEmojiGrid();buildColorGrid();updateMemberPreview();
+  document.getElementById('mm-overlay').classList.add('open');
+}
+function saveMember(){
+  const name=document.getElementById('mm-name').value.trim();
+  if(!name){showToast('❌ 請輸入姓名');return;}
+  if(editingMemberId!==null){
+    const idx=members.findIndex(m=>m.id===editingMemberId);
+    if(idx>-1)members[idx]={...members[idx],name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg};
+    showToast('✅ 成員已更新');
+  }else{
+    members.push({id:nextMId++,name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg});
+    showToast('✅ 成員已新增');
+  }
+  saveMembers();closeModal('mm-overlay');
+  renderSidebarMembers();
+  if(activeView==='dashboard')renderDash();
+  if(activeView==='record')renderRecordView();
+  if(activeView==='calendar')renderCalView();
+  if(activeView==='summary')renderSummary();
+}
+function askDeleteMember(){
+  if(editingMemberId===null)return;
+  const m=members.find(x=>x.id===editingMemberId);if(!m)return;
+  const cnt=records.filter(r=>r.memberId===m.id).length;
+  pendingDeleteId=editingMemberId;pendingDeleteType='member';
+  document.getElementById('conf-title').textContent='刪除成員';
+  document.getElementById('conf-msg').textContent=`確定要刪除「${m.name}」嗎？這將同時刪除該成員的 ${cnt} 筆血壓記錄，此動作無法復原。`;
+  document.getElementById('conf-ok-btn').textContent='刪除成員';
   document.getElementById('conf-overlay').classList.add('open');
 }
-function closeConfirm(){document.getElementById('conf-overlay').classList.remove('open');pendingDeleteId=null;}
-function confirmDelete(){
-  if(pendingDeleteId===null)return;
-  records=records.filter(r=>r.id!==pendingDeleteId);
-  save();closeConfirm();renderSidebarMembers();
+ 
+/* ═══ RECORD DELETE ═══ */
+function askDeleteRecord(id){
+  const r=records.find(x=>x.id===id);if(!r)return;
+  const m=members.find(x=>x.id===r.memberId)||fallbackM();
+  pendingDeleteId=id;pendingDeleteType='record';
+  document.getElementById('conf-title').textContent='刪除記錄';
+  document.getElementById('conf-msg').textContent=`確定要刪除 ${m.name} 在 ${r.date} ${r.time} 的記錄（${r.sys}/${r.dia} mmHg）？此動作無法復原。`;
+  document.getElementById('conf-ok-btn').textContent='刪除';
+  document.getElementById('conf-overlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('conf-overlay').classList.remove('open');pendingDeleteId=null;pendingDeleteType=null;}
+function confirmAction(){
+  if(pendingDeleteType==='record'){
+    records=records.filter(r=>r.id!==pendingDeleteId);
+    saveRecords();showToast('🗑️ 記錄已刪除');
+  }else if(pendingDeleteType==='member'){
+    records=records.filter(r=>r.memberId!==pendingDeleteId);
+    members=members.filter(m=>m.id!==pendingDeleteId);
+    saveRecords();saveMembers();
+    closeModal('mm-overlay');
+    showToast('🗑️ 成員已刪除');
+  }
+  closeConfirm();renderSidebarMembers();
   if(activeView==='dashboard')renderDash();
   if(activeView==='record')renderRecList();
-  if(activeView==='calendar')renderCalendar();
+  if(activeView==='calendar')renderCalView();
   if(activeView==='summary')renderSummary();
-  showToast('🗑️ 記錄已刪除');
 }
  
-/* ─── CALENDAR ─── */
-function renderCalView(){popSel('cal-member');document.getElementById('cal-member').value=calMemberId;renderCalendar();}
+/* ═══ CALENDAR ═══ */
+function renderCalView(){
+  popSel('cal-member');
+  const s=document.getElementById('cal-member');
+  if(s&&!s.querySelector('option[value="'+calMemberId+'"]')&&members.length)calMemberId=members[0].id;
+  if(s)s.value=calMemberId;
+  renderCalendar();
+}
 function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function renderCalendar(){
-  calMemberId=parseInt(document.getElementById('cal-member').value)||calMemberId;
+  const s=document.getElementById('cal-member');
+  if(s)calMemberId=parseInt(s.value)||calMemberId;
   const mn=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
   document.getElementById('month-title').textContent=`${calYear} 年 ${mn[calMonth]}`;
   const fd=new Date(calYear,calMonth,1).getDay(),dim=new Date(calYear,calMonth+1,0).getDate();
-  const ts=today.toISOString().split('T')[0];
   const rbd={};records.filter(r=>r.memberId===calMemberId).forEach(r=>{if(!rbd[r.date])rbd[r.date]=[];rbd[r.date].push(r);});
   let html=['日','一','二','三','四','五','六'].map(d=>`<div class="cal-hd">${d}</div>`).join('');
   for(let i=0;i<fd;i++)html+=`<div class="cal-d empty"></div>`;
@@ -694,7 +830,7 @@ function renderCalendar(){
     const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const recs=rbd[ds]||[];let dot='';
     if(recs.length){const worst=recs.reduce((a,b)=>cl(a.sys,a.dia).sev>cl(b.sys,b.dia).sev?a:b);const c=cl(worst.sys,worst.dia);dot=`<div class="cal-dot" style="background:${c.color}"></div>`;}
-    html+=`<div class="cal-d ${ds===ts?'today':''}" onclick="showDayDetail('${ds}',this)"><div class="cal-dn">${d}</div>${dot}</div>`;
+    html+=`<div class="cal-d ${ds===TODAYSTR?'today':''}" onclick="showDayDetail('${ds}',this)"><div class="cal-dn">${d}</div>${dot}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
 }
@@ -702,24 +838,25 @@ function showDayDetail(ds,el){
   document.querySelectorAll('.cal-d').forEach(e=>e.classList.remove('selected'));
   el&&el.classList.add('selected');
   const recs=records.filter(r=>r.memberId===calMemberId&&r.date===ds);
-  const m=MEMBERS.find(x=>x.id===calMemberId);
+  const m=members.find(x=>x.id===calMemberId)||fallbackM();
   const dc=document.getElementById('cal-detail-card');
   document.getElementById('cal-detail-title').textContent=`📌 ${ds} — ${m.name}`;
   dc.style.display='block';
-  if(!recs.length){document.getElementById('cal-detail-content').innerHTML=`<div style="color:var(--muted);font-size:13px;padding:12px 0;text-align:center">當天無記錄<br><button class="btn btn-p" style="margin-top:12px;max-width:200px" onclick="openAddModal()">＋ 新增記錄</button></div>`;return;}
-  document.getElementById('cal-detail-content').innerHTML=`<div class="rec-list">${recs.map(r=>{const c=cl(r.sys,r.dia);return`<div class="rec-item"><div class="rec-item-left"><div class="rec-meta"><span style="color:var(--muted);font-size:12px">🕐 ${r.time}</span><span class="bp-lv ${c.cls}">${c.label}</span></div><div class="rec-bp" style="color:${c.color}">${r.sys}<span style="color:var(--muted);font-size:14px">/</span>${r.dia} <span style="font-size:12px;color:var(--muted);font-family:'Noto Sans TC',sans-serif">mmHg${r.pulse?' · ♥ '+r.pulse:''}</span></div>${r.note?`<div class="rec-note">📝 ${r.note}</div>`:''}</div><div class="rec-actions"><button class="icon-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button><button class="icon-btn del-btn" onclick="askDelete(${r.id})">🗑️</button></div></div>`;}).join('')}</div>`;
+  if(!recs.length){
+    document.getElementById('cal-detail-content').innerHTML=`<div style="color:var(--muted);font-size:13px;padding:12px 0;text-align:center">當天無記錄<br><button class="btn btn-p" style="margin-top:12px;max-width:200px" onclick="openAddModal(${calMemberId})">＋ 新增記錄</button></div>`;
+    return;
+  }
+  document.getElementById('cal-detail-content').innerHTML=`<div class="rec-list">${recs.map(r=>recItemHTML(r,false)).join('')}</div>`;
   dc.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
  
-/* ─── SUMMARY ─── */
+/* ═══ SUMMARY ═══ */
 function renderSummary(){
-  const sel=document.getElementById('sum-member');
-  const prev=sel.value;
   popSel('sum-member');
-  if(prev&&sel.querySelector('option[value="'+prev+'"]'))sel.value=prev;
-  const mid=parseInt(sel.value)||1;
+  const sel=document.getElementById('sum-member');
+  const mid=parseInt(sel.value)||members[0]?.id||1;
   const per=parseInt(document.getElementById('sum-period').value)||30;
-  const cutoff=new Date(today);cutoff.setDate(cutoff.getDate()-per+1);
+  const cutoff=new Date(TODAY);cutoff.setDate(cutoff.getDate()-per+1);
   const cut=cutoff.toISOString().split('T')[0];
   const recs=[...records].filter(r=>r.memberId===mid&&r.date>=cut).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
   const se=document.getElementById('sum-stats');
@@ -735,10 +872,7 @@ function renderSummary(){
   drawChart(recs);
   const te=document.getElementById('sum-records');
   if(!recs.length){te.innerHTML='';return;}
-  te.innerHTML=`<div class="rec-list">${[...recs].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(r=>{
-    const m=MEMBERS.find(x=>x.id===r.memberId)||{emoji:'?',name:'未知',bg:'rgba(100,100,100,.2)',color:'var(--muted)'};const c=cl(r.sys,r.dia);
-    return`<div class="rec-item"><div class="rec-item-left"><div class="rec-meta"><span class="rec-date">${r.date.slice(5)}</span><span class="rec-time">${r.time}</span><span class="bp-lv ${c.cls}">${c.label}</span></div><div class="rec-bp" style="color:${c.color}">${r.sys}/${r.dia} <span style="font-size:12px;color:var(--muted);font-family:'Noto Sans TC',sans-serif">mmHg${r.pulse?' · ♥ '+r.pulse:''}</span></div>${r.note?`<div class="rec-note">📝 ${r.note}</div>`:''}</div><div class="rec-actions"><button class="icon-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button><button class="icon-btn del-btn" onclick="askDelete(${r.id})">🗑️</button></div></div>`;
-  }).join('')}</div>`;
+  te.innerHTML=`<div class="rec-list">${[...recs].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(r=>recItemHTML(r,false)).join('')}</div>`;
 }
 function drawChart(recs){
   const svg=document.getElementById('trend-chart');
@@ -759,10 +893,10 @@ function drawChart(recs){
   svg.innerHTML=o+pl(recs.map(r=>r.sys),'#ef4444')+pl(recs.map(r=>r.dia),'#3b82f6')+pd(recs.map(r=>r.sys),'#ef4444')+pd(recs.map(r=>r.dia),'#3b82f6')+xl;
 }
  
-/* ─── TOAST ─── */
+/* ═══ TOAST ═══ */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
  
-/* ─── INIT ─── */
+/* ═══ INIT ═══ */
 renderSidebarMembers();
 renderDash();
 </script>
