@@ -1,7 +1,3 @@
-
-Blood pressure tracker · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -23,10 +19,10 @@ Copy
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg)}
 body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-direction:column}
- 
+
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
 #overlay.show{opacity:1;pointer-events:all}
- 
+
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:transform .3s cubic-bezier(.4,0,.2,1);padding-top:var(--sti)}
 @media(max-width:899px){.sidebar{transform:translateX(calc(-1*var(--sw)))}.sidebar.open{transform:translateX(0)}}
@@ -47,12 +43,12 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .mb-btn:active,.mb-btn:hover{background:var(--surface2)}
 .mb-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .mb-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
- 
+
 /* MAIN */
 .main{position:fixed;inset:0;display:flex;flex-direction:column;transition:left .3s cubic-bezier(.4,0,.2,1);padding-top:var(--sti)}
 @media(min-width:900px){.main{left:var(--sw)}.main.expanded{left:0}}
 @media(max-width:899px){.main{left:0}}
- 
+
 /* TOPBAR */
 .topbar{height:var(--th);flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
 .tb-menu{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;flex-shrink:0;font-size:18px;transition:background .15s;user-select:none}
@@ -62,10 +58,10 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .tb-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .tb-add{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:24px;color:#fff;border:none;transition:background .15s}
 .tb-add:active,.tb-add:hover{background:var(--accent2)}
- 
+
 .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 14px calc(var(--bnh) + var(--sbi) + 12px);-webkit-overflow-scrolling:touch}
 @media(min-width:900px){.content{padding:20px 24px 20px}}
- 
+
 /* BOTTOM NAV */
 .bottomnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--bnh) + var(--sbi));padding-bottom:var(--sbi);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:100}
 @media(min-width:900px){.bottomnav{display:none!important}}
@@ -74,18 +70,18 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .bn-item.active{color:var(--accent2)}
 .bn-icon{font-size:21px;line-height:1}
 .bn-lbl{font-size:10px;font-weight:600}
- 
+
 .view{display:none}.view.active{display:block}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
 .card-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
- 
+
 /* BP BADGES */
 .bp-lv{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .lv-ok{background:var(--nb);color:var(--normal)}.lv-hi{background:var(--eb);color:var(--elevated)}
 .lv-s1{background:var(--s1b);color:var(--stage1)}.lv-s2{background:var(--s2b);color:var(--stage2)}
 .lv-cr{background:var(--crb);color:var(--crisis);animation:pulse-cr 1.5s infinite}
 @keyframes pulse-cr{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 5px rgba(220,38,38,0)}}
- 
+
 /* MEMBER GRID */
 .mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
 .mcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 4px;cursor:pointer;text-align:center;transition:all .15s;position:relative}
@@ -97,7 +93,7 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .mbp{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px}
 .mcard-edit{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:5px;background:rgba(59,130,246,.18);font-size:10px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;cursor:pointer;border:none;color:var(--accent2)}
 .mcard:hover .mcard-edit{opacity:1}
- 
+
 /* FORM */
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .frow.full{grid-template-columns:1fr}
@@ -107,19 +103,19 @@ body{font-family:'Noto Sans TC',sans-serif;color:var(--text);display:flex;flex-d
 .finput:focus{outline:none;border-color:var(--accent)}
 .finput::placeholder{color:var(--muted);font-size:13px;font-family:'Noto Sans TC',sans-serif}
 select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
- 
+
 /* PREVIEW */
 .prev-box{background:var(--surface2);border-radius:12px;padding:12px;margin:10px 0;display:flex;align-items:center;justify-content:space-between}
 .prev-num{font-family:'DM Mono',monospace;font-size:26px;font-weight:700}
 .prev-lbl{font-size:10px;color:var(--muted);margin-top:2px}
- 
+
 /* BUTTONS */
 .btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Noto Sans TC',sans-serif;transition:all .15s;width:100%;user-select:none}
 .btn:active{transform:scale(.97)}
 .btn-p{background:var(--accent);color:#fff}.btn-p:active,.btn-p:hover{background:var(--accent2)}
 .btn-o{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-o:active,.btn-o:hover{background:var(--surface2)}
 .btn-d{background:rgba(220,38,38,.12);color:var(--crisis);border:1px solid rgba(220,38,38,.25)}.btn-d:active{background:rgba(220,38,38,.22)}
- 
+
 /* RECORD LIST */
 .rec-list{display:flex;flex-direction:column;gap:8px}
 .rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px}
@@ -134,7 +130,7 @@ select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
 .icon-btn:active{transform:scale(.9)}
 .edit-btn{background:rgba(59,130,246,.12);color:var(--accent)}.edit-btn:hover{background:rgba(59,130,246,.22)}
 .del-btn{background:rgba(220,38,38,.1);color:var(--crisis)}.del-btn:hover{background:rgba(220,38,38,.2)}
- 
+
 /* CALENDAR */
 .cal-topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .mo-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:18px;flex-shrink:0}
@@ -147,7 +143,7 @@ select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
 .cal-d.empty{opacity:0;pointer-events:none}.cal-d.selected{background:rgba(59,130,246,.18);border-color:var(--accent)}
 .cal-dn{font-weight:600;line-height:1}
 .cal-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
- 
+
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;position:relative;overflow:hidden;text-align:center}
@@ -156,12 +152,12 @@ select.finput{font-family:'Noto Sans TC',sans-serif;font-size:14px}
 .stat-lbl{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 .stat-val{font-size:20px;font-weight:900;font-family:'DM Mono',monospace;margin:5px 0 3px}
 .stat-desc{font-size:9px;color:var(--muted)}
- 
+
 /* CHART */
 .chart-wrap{height:170px;margin-bottom:8px}
 svg.chart{width:100%;height:100%}
 @media(min-width:640px){.chart-wrap{height:210px}}
- 
+
 /* MODAL SHEET */
 .mo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;z-index:300;opacity:0;pointer-events:none;transition:opacity .22s}
 .mo-overlay.open{opacity:1;pointer-events:all}
@@ -178,25 +174,25 @@ svg.chart{width:100%;height:100%}
   .mo-overlay.open .mo-sheet{transform:scale(1)}
   .mo-handle{display:none}
 }
- 
+
 /* EMOJI PICKER */
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
 .emoji-opt{width:100%;aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;background:var(--surface2);border:2px solid transparent;transition:all .15s}
 .emoji-opt:active{transform:scale(.9)}
 .emoji-opt.selected{border-color:var(--accent);background:rgba(59,130,246,.15)}
- 
+
 /* COLOR PICKER */
 .color-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
 .color-opt{width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;box-sizing:border-box}
 .color-opt:active{transform:scale(.9)}
 .color-opt.selected{border-color:var(--text)}
- 
+
 /* MEMBER PREVIEW */
 .member-preview{display:flex;align-items:center;gap:14px;background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px}
 .mp-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 .mp-name{font-size:18px;font-weight:800}
 .mp-sub{font-size:11px;color:var(--muted);margin-top:2px}
- 
+
 /* CONFIRM */
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:400;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
 .confirm-overlay.open{opacity:1;pointer-events:all}
@@ -205,29 +201,50 @@ svg.chart{width:100%;height:100%}
 .confirm-title{font-size:17px;font-weight:800;margin-bottom:8px}
 .confirm-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
 .confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
- 
+
 /* TOAST */
 .toast{position:fixed;bottom:calc(var(--bnh) + var(--sbi) + 14px);left:50%;transform:translateX(-50%) translateY(12px);background:rgba(17,24,39,.96);border:1px solid var(--border);border-radius:12px;padding:11px 20px;font-size:13px;font-weight:600;z-index:500;opacity:0;transition:all .25s;white-space:nowrap;backdrop-filter:blur(8px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(min-width:900px){.toast{bottom:20px}}
- 
+
 /* LEGEND */
 .bp-legend{display:flex;flex-direction:column;gap:8px}
 .leg-item{border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px}
 .leg-main{flex:1}
 .leg-name{font-size:13px;font-weight:700}
 .leg-range{font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;opacity:.85}
- 
+
 @media(min-width:640px){
   .mgrid{gap:12px}.mav{width:46px;height:46px;font-size:20px}.mbp{font-size:14px}.mname{font-size:12px}
   .stats-row{gap:12px}.stat-val{font-size:24px}
 }
+
+/* LOADING */
+#loading-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loading-icon{font-size:48px;animation:beat .8s ease-in-out infinite alternate}
+@keyframes beat{from{transform:scale(1)}to{transform:scale(1.15)}}
+.loading-text{font-size:15px;color:var(--muted);font-weight:600}
+.loading-dots span{animation:blink 1.2s infinite;opacity:0}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+.sync-badge{position:fixed;top:calc(var(--th) + var(--sti) + 8px);right:12px;background:var(--nb);color:var(--normal);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;z-index:50;opacity:0;transition:opacity .4s}
+.sync-badge.show{opacity:1}
 </style>
 </head>
 <body>
- 
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <div class="loading-icon">🫀</div>
+  <div class="loading-text">連線中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+</div>
+
+<!-- SYNC BADGE -->
+<div class="sync-badge" id="sync-badge">☁️ 已同步</div>
+
 <div id="overlay" onclick="closeSidebar()"></div>
- 
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
@@ -247,7 +264,7 @@ svg.chart{width:100%;height:100%}
     <div id="sidebar-members"></div>
   </div>
 </aside>
- 
+
 <!-- MAIN -->
 <div class="main" id="main">
   <div class="topbar">
@@ -258,16 +275,16 @@ svg.chart{width:100%;height:100%}
     </div>
     <button class="tb-add" onclick="openAddModal()">＋</button>
   </div>
- 
+
   <div class="content" id="content">
- 
+
     <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
       <div class="mgrid" id="members-grid"></div>
       <div class="card"><div class="card-title">📊 今日概況</div><div id="today-summary"></div></div>
       <div class="card"><div class="card-title">⚠️ 警示</div><div id="alerts-panel"></div></div>
     </div>
- 
+
     <!-- RECORD -->
     <div class="view" id="view-record">
       <div class="card">
@@ -293,7 +310,7 @@ svg.chart{width:100%;height:100%}
       </div>
       <div class="card"><div class="card-title">📋 所有記錄</div><div id="recent-records"></div></div>
     </div>
- 
+
     <!-- CALENDAR -->
     <div class="view" id="view-calendar">
       <div class="card">
@@ -310,7 +327,7 @@ svg.chart{width:100%;height:100%}
         <div id="cal-detail-content"></div>
       </div>
     </div>
- 
+
     <!-- SUMMARY -->
     <div class="view" id="view-summary">
       <div class="frow" style="margin-bottom:14px">
@@ -329,7 +346,7 @@ svg.chart{width:100%;height:100%}
       </div>
       <div class="card"><div class="card-title">📋 記錄明細</div><div id="sum-records"></div></div>
     </div>
- 
+
     <!-- GUIDE -->
     <div class="view" id="view-guide">
       <div class="card">
@@ -359,10 +376,10 @@ svg.chart{width:100%;height:100%}
         </ul>
       </div>
     </div>
- 
+
   </div>
 </div>
- 
+
 <!-- BOTTOM NAV -->
 <div class="bottomnav">
   <div class="bn-item active" onclick="showView('dashboard')"><div class="bn-icon">📊</div><div class="bn-lbl">總覽</div></div>
@@ -371,7 +388,7 @@ svg.chart{width:100%;height:100%}
   <div class="bn-item" onclick="showView('summary')"><div class="bn-icon">📈</div><div class="bn-lbl">趨勢</div></div>
   <div class="bn-item" onclick="showView('guide')"><div class="bn-icon">ℹ️</div><div class="bn-lbl">指南</div></div>
 </div>
- 
+
 <!-- BP RECORD MODAL -->
 <div class="mo-overlay" id="mo-overlay" onclick="handleOverlayClick(event,'mo-overlay')">
   <div class="mo-sheet">
@@ -401,32 +418,32 @@ svg.chart{width:100%;height:100%}
     </div>
   </div>
 </div>
- 
+
 <!-- MEMBER MODAL -->
 <div class="mo-overlay" id="mm-overlay" onclick="handleOverlayClick(event,'mm-overlay')">
   <div class="mo-sheet">
     <div class="mo-handle"></div>
     <div class="mo-title" id="mm-title">新增成員</div>
     <div class="mo-sub" id="mm-sub">設定成員名稱、頭像與顏色</div>
- 
+
     <div class="member-preview" id="mm-preview">
       <div class="mp-av" id="mm-prev-av">👤</div>
       <div><div class="mp-name" id="mm-prev-name">新成員</div><div class="mp-sub" id="mm-prev-sub">預覽</div></div>
     </div>
- 
+
     <div class="frow full" style="margin-bottom:12px">
       <div class="fgrp">
         <div class="flbl">姓名</div>
         <input type="text" class="finput" id="mm-name" placeholder="例：爸爸、奶奶..." maxlength="6" oninput="updateMemberPreview()">
       </div>
     </div>
- 
+
     <div class="flbl" style="margin-bottom:6px">選擇頭像</div>
     <div class="emoji-grid" id="emoji-grid"></div>
- 
+
     <div class="flbl" style="margin:14px 0 6px">選擇顏色</div>
     <div class="color-grid" id="color-grid"></div>
- 
+
     <div class="mo-actions" id="mm-btns">
       <button class="btn btn-o" onclick="closeModal('mm-overlay')">取消</button>
       <button class="btn btn-p" onclick="saveMember()">儲存成員</button>
@@ -436,7 +453,7 @@ svg.chart{width:100%;height:100%}
     </div>
   </div>
 </div>
- 
+
 <!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="conf-overlay">
   <div class="confirm-box">
@@ -448,41 +465,122 @@ svg.chart{width:100%;height:100%}
     </div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
-<script>
+
+<script type="module">
+/* ═══ FIREBASE ═══ */
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import{getDatabase,ref,set,push,update,remove,onValue,off}
+  from'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+const firebaseConfig={
+  apiKey:"AIzaSyDorTaFAVSBBX_5kjAsFZSIPWkb7rX1KiM",
+  authDomain:"blood-pressure-tracker-69d32.firebaseapp.com",
+  databaseURL:"https://blood-pressure-tracker-69d32-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"blood-pressure-tracker-69d32",
+  storageBucket:"blood-pressure-tracker-69d32.firebasestorage.app",
+  messagingSenderId:"183116057735",
+  appId:"1:183116057735:web:c52286ab2f9e8e72e67c22"
+};
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
 /* ═══ CONSTANTS ═══ */
 const EMOJIS=['👨','👩','👴','👵','👦','👧','🧑','👶','🧓','🧔','👱','🙎','🧑‍⚕️','🧑‍🦳','🧑‍🦲','😊'];
 const COLORS=[
   {c:'#3b82f6',bg:'rgba(59,130,246,.22)'},{c:'#ec4899',bg:'rgba(236,72,153,.22)'},
   {c:'#f97316',bg:'rgba(249,115,22,.22)'},{c:'#a78bfa',bg:'rgba(167,139,250,.22)'},
-  {c:'#22c55e',bg:'rgba(34,197,94,.22)'}, {c:'#eab308',bg:'rgba(234,179,8,.22)'},
-  {c:'#ef4444',bg:'rgba(239,68,68,.22)'}, {c:'#06b6d4',bg:'rgba(6,182,212,.22)'},
+  {c:'#22c55e',bg:'rgba(34,197,94,.22)'},{c:'#eab308',bg:'rgba(234,179,8,.22)'},
+  {c:'#ef4444',bg:'rgba(239,68,68,.22)'},{c:'#06b6d4',bg:'rgba(6,182,212,.22)'},
 ];
 const MAX_MEMBERS=5;
 const TODAY=new Date();
 const TODAYSTR=TODAY.toISOString().split('T')[0];
- 
+
 /* ═══ STATE ═══ */
-let members=JSON.parse(localStorage.getItem('bp_members')||'null')||[
-  {id:1,name:'爸爸',emoji:'👨',color:'#3b82f6',bg:'rgba(59,130,246,.22)'},
-  {id:2,name:'媽媽',emoji:'👩',color:'#ec4899',bg:'rgba(236,72,153,.22)'},
-];
-let records=JSON.parse(localStorage.getItem('bp_v3')||'[]');
-// clean up old keys
-['bp_records','bp_records_v2'].forEach(k=>localStorage.removeItem(k));
- 
-let nextMId=members.reduce((m,x)=>Math.max(m,x.id),0)+1;
-let nextRId=records.reduce((m,r)=>Math.max(m,r.id),0)+1;
-let calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calMemberId=members[0]?.id||1;
+let members=[];
+let records=[];
+let calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth(),calMemberId=null;
 let activeView='dashboard';
 let editingRecId=null,pendingDeleteId=null,pendingDeleteType=null;
 let editingMemberId=null,pickedEmoji=EMOJIS[0],pickedColor=COLORS[0];
- 
-function saveMembers(){localStorage.setItem('bp_members',JSON.stringify(members));}
-function saveRecords(){localStorage.setItem('bp_v3',JSON.stringify(records));}
- 
+let fbLoaded={members:false,records:false};
+
+/* ── Loading screen ── */
+function showLoading(on){
+  document.getElementById('loading-screen').style.display=on?'flex':'none';
+}
+
+/* ═══ FIREBASE SAVE HELPERS ═══ */
+async function saveMembers(){
+  const obj={};
+  members.forEach(m=>{ obj[m.id]=m; });
+  await set(ref(db,'members'),obj);
+}
+async function saveRecords(){
+  const obj={};
+  records.forEach(r=>{ obj[r.id]=r; });
+  await set(ref(db,'records'),obj);
+}
+
+/* ═══ FIREBASE LIVE LISTENERS ═══ */
+function initFirebase(){
+  showLoading(true);
+
+  onValue(ref(db,'members'),(snap)=>{
+    const val=snap.val();
+    if(val){
+      members=Object.values(val).sort((a,b)=>a.id-b.id);
+    } else {
+      // First-time: seed default members
+      members=[
+        {id:1,name:'爸爸',emoji:'👨',color:'#3b82f6',bg:'rgba(59,130,246,.22)'},
+        {id:2,name:'媽媽',emoji:'👩',color:'#ec4899',bg:'rgba(236,72,153,.22)'},
+      ];
+      saveMembers();
+    }
+    if(!calMemberId&&members.length)calMemberId=members[0].id;
+    fbLoaded.members=true;
+    checkLoaded();
+  },(err)=>{
+    showLoading(false);
+    showToast('❌ 連線失敗：'+err.message);
+  });
+
+  onValue(ref(db,'records'),(snap)=>{
+    const val=snap.val();
+    records=val?Object.values(val):[];
+    fbLoaded.records=true;
+    checkLoaded();
+  });
+}
+
+function checkLoaded(){
+  if(!fbLoaded.members||!fbLoaded.records)return;
+  showLoading(false);
+  // Flash sync badge on every live update (after first load)
+  if(fbLoaded._firstDone){
+    const b=document.getElementById('sync-badge');
+    b.classList.add('show');setTimeout(()=>b.classList.remove('show'),2000);
+  }
+  fbLoaded._firstDone=true;
+  renderSidebarMembers();
+  // Re-render active view whenever data changes (live sync)
+  if(activeView==='dashboard')renderDash();
+  else if(activeView==='record')renderRecList();
+  else if(activeView==='calendar')renderCalendar();
+  else if(activeView==='summary')renderSummary();
+}
+
+/* nextId helpers (use timestamp-based unique int) */
+function newMId(){return Date.now();}
+function newRId(){return Date.now()+Math.floor(Math.random()*1000);}
+
+/* Wire record form live preview (inside module) */
+document.getElementById('rec-sys').addEventListener('input',updateRecPrev);
+document.getElementById('rec-dia').addEventListener('input',updateRecPrev);
+
 /* ═══ BP CLASSIFY ═══ */
 function cl(sys,dia){
   if(sys>180||dia>120)return{label:'高血壓危險期',cls:'lv-cr',color:'var(--crisis)',sev:4};
@@ -493,7 +591,7 @@ function cl(sys,dia){
 }
 function scCard(sev){return['sc-ok','sc-hi','sc-s1','sc-s2','sc-cr'][sev]||'sc-ok';}
 function fallbackM(){return{emoji:'?',name:'未知',bg:'rgba(100,100,100,.15)',color:'var(--muted)'};}
- 
+
 /* ═══ SIDEBAR ═══ */
 let sidebarOpen=false,sidebarCollapsed=false;
 function handleMenuBtn(){window.innerWidth>=900?toggleDesktop():toggleMobile();}
@@ -505,7 +603,7 @@ function toggleDesktop(){
   document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
   document.getElementById('main').classList.toggle('expanded',sidebarCollapsed);
 }
- 
+
 /* ═══ VIEWS ═══ */
 const VIEW_TITLES={dashboard:['總覽儀表板','家庭血壓健康監測'],record:['記錄血壓','新增血壓數據'],calendar:['日曆檢視','按日期瀏覽記錄'],summary:['趨勢分析','血壓統計與趨勢'],guide:['血壓指南','分級與量測說明']};
 function showView(v){
@@ -526,7 +624,7 @@ function showView(v){
   if(v==='calendar')renderCalView();
   if(v==='summary')renderSummary();
 }
- 
+
 /* ═══ SIDEBAR MEMBERS ═══ */
 function renderSidebarMembers(){
   const el=document.getElementById('sidebar-members');
@@ -540,7 +638,7 @@ function renderSidebarMembers(){
   el.innerHTML=html;
 }
 function selectMember(id){calMemberId=id;showView('calendar');const s=document.getElementById('cal-member');if(s)s.value=id;renderCalendar();}
- 
+
 /* ═══ MEMBER SELECT POPULATE ═══ */
 function popSel(id){
   const s=document.getElementById(id);if(!s)return;
@@ -548,7 +646,7 @@ function popSel(id){
   s.innerHTML=members.map(m=>`<option value="${m.id}">${m.emoji} ${m.name}</option>`).join('');
   if(prev&&s.querySelector('option[value="'+prev+'"]'))s.value=prev;
 }
- 
+
 /* ═══ DASHBOARD ═══ */
 function renderDash(){
   // Member cards: real members + blank slots up to MAX_MEMBERS
@@ -571,7 +669,7 @@ function renderDash(){
     </div>`;
   }
   document.getElementById('members-grid').innerHTML=html;
- 
+
   // Today summary
   const tr=records.filter(r=>r.date===TODAYSTR);
   const se=document.getElementById('today-summary');
@@ -583,7 +681,7 @@ function renderDash(){
         <div style="font-family:'DM Mono',monospace;font-weight:700;font-size:15px">${r.sys}/${r.dia}</div>
         <span class="bp-lv ${c.cls}">${c.label}</span>
       </div>`;}).join('');
- 
+
   // Alerts
   const ae=document.getElementById('alerts-panel');
   const warns=[];
@@ -596,7 +694,7 @@ function renderDash(){
       ${w.c.sev===4?'<div style="font-size:12px;color:var(--crisis);margin-top:5px;font-weight:700">⚠️ 請立即諮詢醫師！</div>':''}
     </div>`).join('');
 }
- 
+
 /* ═══ RECORD VIEW ═══ */
 function renderRecordView(){
   popSel('rec-member');
@@ -625,7 +723,7 @@ function recItemHTML(r,showMember){
     </div>
   </div>`;
 }
-function saveRecord(){
+async function saveRecord(){
   const memberId=parseInt(document.getElementById('rec-member').value);
   const date=document.getElementById('rec-date').value;
   const sys=parseInt(document.getElementById('rec-sys').value);
@@ -634,21 +732,18 @@ function saveRecord(){
   const time=document.getElementById('rec-time').value;
   const note=document.getElementById('rec-note').value.trim();
   if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
-  records.push({id:nextRId++,memberId,date,sys,dia,pulse,time,note});
-  saveRecords();
+  const id=newRId();
+  await set(ref(db,'records/'+id),{id,memberId,date,sys,dia,pulse,time,note});
   ['rec-sys','rec-dia','rec-pulse','rec-note'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('rec-preview').style.display='none';
-  renderRecList();renderSidebarMembers();showToast('✅ 記錄已儲存');
+  showToast('✅ 記錄已儲存');
 }
-// Live preview in record form
-document.getElementById('rec-sys').addEventListener('input',updateRecPrev);
-document.getElementById('rec-dia').addEventListener('input',updateRecPrev);
 function updateRecPrev(){
   const sys=parseInt(document.getElementById('rec-sys').value),dia=parseInt(document.getElementById('rec-dia').value);
   if(!isNaN(sys)&&!isNaN(dia)){const c=cl(sys,dia);document.getElementById('prev-nums').textContent=`${sys} / ${dia}`;document.getElementById('prev-level').innerHTML=`<span class="bp-lv ${c.cls}">${c.label}</span>`;document.getElementById('rec-preview').style.display='flex';}
   else document.getElementById('rec-preview').style.display='none';
 }
- 
+
 /* ═══ BP RECORD MODAL ═══ */
 function openAddModal(presetMemberId){
   editingRecId=null;
@@ -689,7 +784,7 @@ function updatePrev(){
   if(!isNaN(sys)&&!isNaN(dia)){const c=cl(sys,dia);document.getElementById('m-prev-num').textContent=`${sys} / ${dia}`;document.getElementById('m-prev-lv').innerHTML=`<span class="bp-lv ${c.cls}">${c.label}</span>`;document.getElementById('m-preview').style.display='flex';}
   else document.getElementById('m-preview').style.display='none';
 }
-function saveModal(){
+async function saveModal(){
   const memberId=parseInt(document.getElementById('m-member').value);
   const date=document.getElementById('m-date').value;
   const sys=parseInt(document.getElementById('m-sys').value);
@@ -699,20 +794,16 @@ function saveModal(){
   const note=document.getElementById('m-note').value.trim();
   if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
   if(editingRecId!==null){
-    const idx=records.findIndex(r=>r.id===editingRecId);
-    if(idx>-1)records[idx]={id:editingRecId,memberId,date,sys,dia,pulse,time,note};
+    await set(ref(db,'records/'+editingRecId),{id:editingRecId,memberId,date,sys,dia,pulse,time,note});
     showToast('✅ 記錄已更新');
   }else{
-    records.push({id:nextRId++,memberId,date,sys,dia,pulse,time,note});
+    const id=newRId();
+    await set(ref(db,'records/'+id),{id,memberId,date,sys,dia,pulse,time,note});
     showToast('✅ 記錄已儲存');
   }
-  saveRecords();closeModal('mo-overlay');renderSidebarMembers();
-  if(activeView==='dashboard')renderDash();
-  if(activeView==='record')renderRecList();
-  if(activeView==='calendar')renderCalendar();
-  if(activeView==='summary')renderSummary();
+  closeModal('mo-overlay');
 }
- 
+
 /* ═══ MEMBER MODAL ═══ */
 function buildEmojiGrid(){
   document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>`<div class="emoji-opt${e===pickedEmoji?' selected':''}" onclick="pickEmoji('${e}')">${e}</div>`).join('');
@@ -750,23 +841,20 @@ function openMemberModal(id){
   buildEmojiGrid();buildColorGrid();updateMemberPreview();
   document.getElementById('mm-overlay').classList.add('open');
 }
-function saveMember(){
+async function saveMember(){
   const name=document.getElementById('mm-name').value.trim();
   if(!name){showToast('❌ 請輸入姓名');return;}
   if(editingMemberId!==null){
-    const idx=members.findIndex(m=>m.id===editingMemberId);
-    if(idx>-1)members[idx]={...members[idx],name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg};
+    const existing=members.find(m=>m.id===editingMemberId)||{};
+    await set(ref(db,'members/'+editingMemberId),{...existing,name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg});
     showToast('✅ 成員已更新');
   }else{
-    members.push({id:nextMId++,name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg});
+    if(members.length>=MAX_MEMBERS){showToast('⚠️ 最多只能有 5 位成員');return;}
+    const id=newMId();
+    await set(ref(db,'members/'+id),{id,name,emoji:pickedEmoji,color:pickedColor.c,bg:pickedColor.bg});
     showToast('✅ 成員已新增');
   }
-  saveMembers();closeModal('mm-overlay');
-  renderSidebarMembers();
-  if(activeView==='dashboard')renderDash();
-  if(activeView==='record')renderRecordView();
-  if(activeView==='calendar')renderCalView();
-  if(activeView==='summary')renderSummary();
+  closeModal('mm-overlay');
 }
 function askDeleteMember(){
   if(editingMemberId===null)return;
@@ -778,7 +866,7 @@ function askDeleteMember(){
   document.getElementById('conf-ok-btn').textContent='刪除成員';
   document.getElementById('conf-overlay').classList.add('open');
 }
- 
+
 /* ═══ RECORD DELETE ═══ */
 function askDeleteRecord(id){
   const r=records.find(x=>x.id===id);if(!r)return;
@@ -790,24 +878,21 @@ function askDeleteRecord(id){
   document.getElementById('conf-overlay').classList.add('open');
 }
 function closeConfirm(){document.getElementById('conf-overlay').classList.remove('open');pendingDeleteId=null;pendingDeleteType=null;}
-function confirmAction(){
+async function confirmAction(){
   if(pendingDeleteType==='record'){
-    records=records.filter(r=>r.id!==pendingDeleteId);
-    saveRecords();showToast('🗑️ 記錄已刪除');
+    await remove(ref(db,'records/'+pendingDeleteId));
+    showToast('🗑️ 記錄已刪除');
   }else if(pendingDeleteType==='member'){
-    records=records.filter(r=>r.memberId!==pendingDeleteId);
-    members=members.filter(m=>m.id!==pendingDeleteId);
-    saveRecords();saveMembers();
+    // Delete all records for this member
+    const toDelete=records.filter(r=>r.memberId===pendingDeleteId);
+    for(const r of toDelete) await remove(ref(db,'records/'+r.id));
+    await remove(ref(db,'members/'+pendingDeleteId));
     closeModal('mm-overlay');
     showToast('🗑️ 成員已刪除');
   }
-  closeConfirm();renderSidebarMembers();
-  if(activeView==='dashboard')renderDash();
-  if(activeView==='record')renderRecList();
-  if(activeView==='calendar')renderCalView();
-  if(activeView==='summary')renderSummary();
+  closeConfirm();
 }
- 
+
 /* ═══ CALENDAR ═══ */
 function renderCalView(){
   popSel('cal-member');
@@ -849,7 +934,7 @@ function showDayDetail(ds,el){
   document.getElementById('cal-detail-content').innerHTML=`<div class="rec-list">${recs.map(r=>recItemHTML(r,false)).join('')}</div>`;
   dc.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
- 
+
 /* ═══ SUMMARY ═══ */
 function renderSummary(){
   popSel('sum-member');
@@ -892,13 +977,23 @@ function drawChart(recs){
   let xl='';recs.forEach((r,i)=>{if(i%step===0||i===recs.length-1)xl+=`<text x="${sx(i)}" y="${H-3}" font-size="9" fill="rgba(107,127,163,.7)" text-anchor="middle">${r.date.slice(5)}</text>`;});
   svg.innerHTML=o+pl(recs.map(r=>r.sys),'#ef4444')+pl(recs.map(r=>r.dia),'#3b82f6')+pd(recs.map(r=>r.sys),'#ef4444')+pd(recs.map(r=>r.dia),'#3b82f6')+xl;
 }
- 
+
 /* ═══ TOAST ═══ */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
- 
+
+/* ═══ EXPOSE TO HTML onclick handlers ═══ */
+window.showView=showView;window.handleMenuBtn=handleMenuBtn;window.openAddModal=openAddModal;
+window.openEditModal=openEditModal;window.askDeleteRecord=askDeleteRecord;
+window.saveRecord=saveRecord;window.saveModal=saveModal;window.closeModal=closeModal;
+window.handleOverlayClick=handleOverlayClick;window.updatePrev=updatePrev;window.updateRecPrev=updateRecPrev;
+window.openMemberModal=openMemberModal;window.saveMember=saveMember;window.askDeleteMember=askDeleteMember;
+window.confirmAction=confirmAction;window.closeConfirm=closeConfirm;
+window.selectMember=selectMember;window.changeMonth=changeMonth;window.renderCalendar=renderCalendar;
+window.showDayDetail=showDayDetail;window.renderSummary=renderSummary;
+window.pickEmoji=pickEmoji;window.pickColor=pickColor;window.updateMemberPreview=updateMemberPreview;
+
 /* ═══ INIT ═══ */
-renderSidebarMembers();
-renderDash();
+initFirebase();
 </script>
 </body>
 </html>
