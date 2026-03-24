@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0f1e">
+<title>血壓管家</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0f1e; --surface:#111827; --surface2:#1a2235; --border:#1e2d45;
+  --text:#e8f0fe; --muted:#6b7fa3; --accent:#3b82f6; --accent2:#60a5fa;
+  --normal:#22c55e; --elevated:#eab308; --stage1:#f97316; --stage2:#ef4444; --crisis:#dc2626;
+  --normal-bg:rgba(34,197,94,.12); --elevated-bg:rgba(234,179,8,.12);
+  --stage1-bg:rgba(249,115,22,.12); --stage2-bg:rgba(239,68,68,.12); --crisis-bg:rgba(220,38,38,.18);
+  --sidebar-w:260px;
+  --topbar-h:56px;
+  --bottomnav-h:64px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* ── OVERLAY (mobile drawer backdrop) ── */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s}
+#overlay.show{opacity:1;pointer-events:all}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:200;
+  transform:translateX(0);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.sidebar.collapsed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+.sidebar-logo{padding:22px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.logo-icon{font-size:26px;flex-shrink:0}
+.logo-text{font-size:14px;font-weight:700;color:var(--accent2)}
+.logo-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.nav{padding:12px 10px;flex:1;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);transition:all .15s;margin-bottom:2px;user-select:none}
+.nav-item:active{transform:scale(.97)}
+.nav-item.active{background:rgba(59,130,246,.15);color:var(--accent2)}
+.nav-item .icon{font-size:17px;width:22px;text-align:center}
+.members-section{padding:10px;border-top:1px solid var(--border)}
+.members-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 10px 8px}
+.member-btn{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;transition:background .15s;margin-bottom:2px}
+.member-btn:active{background:var(--surface2)}
+.member-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.member-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+
+/* ── MAIN SHELL ── */
+.main{
+  position:fixed;top:0;right:0;bottom:0;
+  left:var(--sidebar-w);
+  display:flex;flex-direction:column;
+  transition:left .28s cubic-bezier(.4,0,.2,1);
+}
+.main.expanded{left:0}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);flex-shrink:0;
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  position:relative;z-index:10;
+}
+.topbar-menu{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .15s;font-size:18px}
+.topbar-menu:active{background:var(--border)}
+.topbar-info{flex:1;min-width:0}
+.topbar-title{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-add{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:22px;color:#fff;transition:background .15s;border:none}
+.topbar-add:active{background:var(--accent2)}
+
+/* ── SCROLL AREA ── */
+.content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:16px 16px calc(var(--bottomnav-h) + var(--safe-bottom) + 8px);
+  -webkit-overflow-scrolling:touch;
+}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottomnav{
+  position:fixed;bottom:0;left:var(--sidebar-w);right:0;
+  height:calc(var(--bottomnav-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:var(--surface);border-top:1px solid var(--border);
+  display:none;align-items:center;justify-content:space-around;
+  z-index:100;transition:left .28s cubic-bezier(.4,0,.2,1);
+}
+.bottomnav.expanded{left:0}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:6px 0;transition:opacity .15s;color:var(--muted);user-select:none}
+.bnav-item:active{opacity:.6}
+.bnav-item.active{color:var(--accent2)}
+.bnav-icon{font-size:20px;line-height:1}
+.bnav-label{font-size:10px;font-weight:600}
+
+/* ── VIEWS ── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+
+/* ── BP BADGE ── */
+.bp-level{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.bp-normal{background:var(--normal-bg);color:var(--normal)}
+.bp-elevated{background:var(--elevated-bg);color:var(--elevated)}
+.bp-stage1{background:var(--stage1-bg);color:var(--stage1)}
+.bp-stage2{background:var(--stage2-bg);color:var(--stage2)}
+.bp-crisis{background:var(--crisis-bg);color:var(--crisis);animation:pulse-crisis 1.5s infinite}
+@keyframes pulse-crisis{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 6px rgba(220,38,38,0)}}
+
+/* ── MEMBERS GRID ── */
+.members-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.member-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 6px;cursor:pointer;transition:all .2s;text-align:center}
+.member-card:active{transform:scale(.96)}
+.mc-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px}
+.mc-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.mc-bp{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;margin-bottom:6px}
+
+/* ── FORM ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+.form-input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:16px;color:var(--text);font-family:'DM Mono',monospace;transition:border-color .15s;width:100%;-webkit-appearance:none}
+.form-input:focus{outline:none;border-color:var(--accent)}
+.form-input::placeholder{color:var(--muted);font-size:13px;font-family:'Noto Sans TC',sans-serif}
+select.form-input{font-family:'Noto Sans TC',sans-serif;font-size:14px}
+
+/* ── PREVIEW ── */
+.preview-bp{background:var(--surface2);border-radius:12px;padding:14px;margin:12px 0;display:flex;align-items:center;justify-content:space-between}
+.preview-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:700}
+.preview-lbl{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* ── BTN ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'Noto Sans TC',sans-serif;transition:all .15s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:active{background:var(--surface2)}
+
+/* ── TABLE ── */
+.records-table{width:100%;border-collapse:collapse;font-size:12px}
+.records-table th{text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border)}
+.records-table td{padding:10px 10px;border-bottom:1px solid rgba(30,45,69,.5)}
+.records-table tr:last-child td{border-bottom:none}
+.bp-value{font-family:'DM Mono',monospace;font-weight:600;font-size:13px}
+
+/* ── CALENDAR ── */
+.cal-wrap{margin-bottom:14px}
+.cal-topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.month-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:18px;color:var(--text);flex-shrink:0}
+.month-btn:active{background:var(--border)}
+.month-title{font-size:15px;font-weight:700;flex:1}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-header{text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:6px 0}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:1px solid transparent;transition:background .12s}
+.cal-day:active{background:var(--surface2)}
+.cal-day.today{border-color:var(--accent)}
+.cal-day.empty{opacity:0;pointer-events:none}
+.cal-day.selected{background:rgba(59,130,246,.18);border-color:var(--accent)}
+.cal-day-num{font-weight:600;line-height:1}
+.cal-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;position:relative;overflow:hidden;text-align:center}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.s-normal::before{background:var(--normal)}
+.stat-card.s-elevated::before{background:var(--elevated)}
+.stat-card.s-stage1::before{background:var(--stage1)}
+.stat-card.s-stage2::before{background:var(--stage2)}
+.stat-card.s-crisis::before{background:var(--crisis)}
+.stat-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.stat-value{font-size:22px;font-weight:900;font-family:'DM Mono',monospace;margin:6px 0 4px}
+.stat-desc{font-size:10px;color:var(--muted)}
+
+/* ── CHART ── */
+.chart-wrap{height:180px;margin-bottom:10px}
+svg.chart{width:100%;height:100%}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;z-index:300;opacity:0;pointer-events:none;transition:opacity .22s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + var(--safe-bottom));width:100%;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--bottomnav-h) + var(--safe-bottom) + 12px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;z-index:400;opacity:0;transition:all .25s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── BP LEGEND (guide) ── */
+.bp-legend{display:flex;flex-direction:column;gap:8px}
+.legend-item{border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:14px}
+.legend-main{flex:1}
+.legend-name{font-size:13px;font-weight:700}
+.legend-range{font-size:11px;font-family:'DM Mono',monospace;margin-top:2px;opacity:.85}
+
+/* ── DESKTOP overrides ── */
+@media (min-width:640px){
+  .members-grid{grid-template-columns:repeat(5,1fr);gap:12px}
+  .mc-avatar{width:48px;height:48px;font-size:20px}
+  .mc-bp{font-size:16px}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+  .stat-value{font-size:28px}
+  .content{padding:20px 24px calc(16px)}
+  .modal-overlay{align-items:center}
+  .modal{border-radius:20px;max-width:480px;margin:auto;width:100%}
+  .modal-handle{display:none}
+  .chart-wrap{height:220px}
+}
+@media (min-width:900px){
+  .bottomnav{display:none !important}
+  .content{padding:24px 28px 24px}
+  .form-row{gap:16px}
+  .members-grid{gap:14px}
+}
+
+/* Mobile-specific (show bottom nav, hide sidebar by default) */
+@media (max-width:899px){
+  .bottomnav{display:flex !important}
+  .sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  .sidebar.open{transform:translateX(0)}
+  .main{left:0}
+  .bottomnav{left:0}
+}
+</style>
+</head>
+<body>
+
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🫀</div>
+    <div>
+      <div class="logo-text">血壓健康管理</div>
+      <div class="logo-sub">家庭健康監測系統</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">功能選單</div>
+    <div class="nav-item active" onclick="showView('dashboard')"><span class="icon">📊</span>總覽儀表板</div>
+    <div class="nav-item" onclick="showView('record')"><span class="icon">📝</span>記錄血壓</div>
+    <div class="nav-item" onclick="showView('calendar')"><span class="icon">📅</span>日曆檢視</div>
+    <div class="nav-item" onclick="showView('summary')"><span class="icon">📈</span>趨勢分析</div>
+    <div class="nav-item" onclick="showView('guide')"><span class="icon">ℹ️</span>血壓指南</div>
+  </nav>
+  <div class="members-section">
+    <div class="members-label">成員</div>
+    <div id="sidebar-members"></div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main" id="main">
+  <div class="topbar">
+    <div class="topbar-menu" onclick="toggleSidebar()">☰</div>
+    <div class="topbar-info">
+      <div class="topbar-title" id="topbar-title">總覽儀表板</div>
+      <div class="topbar-sub" id="topbar-sub">家庭血壓健康監測</div>
+    </div>
+    <div class="topbar-add" onclick="openModal()" title="新增記錄">＋</div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view active" id="view-dashboard">
+      <div class="members-grid" id="members-grid"></div>
+      <div class="card">
+        <div class="card-title">📊 今日概況</div>
+        <div id="today-summary"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚠️ 警示</div>
+        <div id="alerts-panel"></div>
+      </div>
+    </div>
+
+    <!-- ── RECORD ── -->
+    <div class="view" id="view-record">
+      <div class="card">
+        <div class="card-title">📝 新增記錄</div>
+        <div class="form-row">
+          <div class="form-group"><div class="form-label">成員</div><select class="form-input" id="rec-member"></select></div>
+          <div class="form-group"><div class="form-label">日期</div><input type="date" class="form-input" id="rec-date"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><div class="form-label">收縮壓（上）</div><input type="number" class="form-input" id="rec-sys" placeholder="mm Hg" inputmode="numeric"></div>
+          <div class="form-group"><div class="form-label">舒張壓（下）</div><input type="number" class="form-input" id="rec-dia" placeholder="mm Hg" inputmode="numeric"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><div class="form-label">脈搏（次/分）</div><input type="number" class="form-input" id="rec-pulse" placeholder="例：72" inputmode="numeric"></div>
+          <div class="form-group"><div class="form-label">量測時間</div><select class="form-input" id="rec-time"><option>早晨</option><option>中午</option><option>晚間</option><option>睡前</option></select></div>
+        </div>
+        <div class="form-row single">
+          <div class="form-group"><div class="form-label">備註</div><input type="text" class="form-input" id="rec-note" placeholder="例：運動後、用藥後..."></div>
+        </div>
+        <div class="preview-bp" id="rec-preview" style="display:none">
+          <div><div class="preview-lbl">收縮壓 / 舒張壓</div><div class="preview-num" id="prev-nums">— / —</div></div>
+          <div id="prev-level"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveRecord()">儲存記錄</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 最近記錄</div>
+        <div id="recent-records" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <!-- ── CALENDAR ── -->
+    <div class="view" id="view-calendar">
+      <div class="card cal-wrap">
+        <div class="cal-topbar">
+          <div class="month-btn" onclick="changeMonth(-1)">‹</div>
+          <div class="month-title" id="month-title"></div>
+          <div class="month-btn" onclick="changeMonth(1)">›</div>
+        </div>
+        <div class="form-row single" style="margin-bottom:14px">
+          <div class="form-group"><div class="form-label">成員</div><select class="form-input" id="cal-member" onchange="renderCalendar()"></select></div>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" id="cal-detail-title">📌 選擇日期查看記錄</div>
+        <div id="cal-detail-content"><div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">點擊日期查看當天記錄</div></div>
+      </div>
+    </div>
+
+    <!-- ── SUMMARY ── -->
+    <div class="view" id="view-summary">
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group"><select class="form-input" id="sum-member" onchange="renderSummary()"></select></div>
+        <div class="form-group"><select class="form-input" id="sum-period" onchange="renderSummary()"><option value="7">近 7 天</option><option value="14">近 14 天</option><option value="30" selected>近 30 天</option></select></div>
+      </div>
+      <div class="stats-row" id="sum-stats"></div>
+      <div class="card">
+        <div class="card-title">📈 血壓趨勢圖</div>
+        <div class="chart-wrap"><svg class="chart" id="trend-chart" viewBox="0 0 800 200" preserveAspectRatio="none"></svg></div>
+        <div style="display:flex;gap:16px;font-size:11px;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:16px;height:3px;background:#ef4444;border-radius:2px"></span>收縮壓</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:16px;height:3px;background:#3b82f6;border-radius:2px"></span>舒張壓</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:16px;height:3px;background:#22c55e;border-radius:2px;opacity:.7"></span>正常範圍</span>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">📋 記錄明細</div><div id="sum-table" style="overflow-x:auto"></div></div>
+    </div>
+
+    <!-- ── GUIDE ── -->
+    <div class="view" id="view-guide">
+      <div class="card">
+        <div class="card-title">血壓分級標準</div>
+        <div class="bp-legend">
+          <div class="legend-item" style="background:var(--normal-bg)">
+            <span class="bp-level bp-normal" style="width:80px;justify-content:center">● 正常</span>
+            <div class="legend-main"><div class="legend-name" style="color:var(--normal)">正常血壓</div><div class="legend-range" style="color:var(--normal)">收縮壓 &lt;120　舒張壓 &lt;80</div></div>
+          </div>
+          <div class="legend-item" style="background:var(--elevated-bg)">
+            <span class="bp-level bp-elevated" style="width:80px;justify-content:center">● 偏高</span>
+            <div class="legend-main"><div class="legend-name" style="color:var(--elevated)">偏高血壓</div><div class="legend-range" style="color:var(--elevated)">收縮壓 120–129　舒張壓 &lt;80</div></div>
+          </div>
+          <div class="legend-item" style="background:var(--stage1-bg)">
+            <span class="bp-level bp-stage1" style="width:80px;justify-content:center">● 第一期</span>
+            <div class="legend-main"><div class="legend-name" style="color:var(--stage1)">高血壓 第一期</div><div class="legend-range" style="color:var(--stage1)">收縮壓 130–139　舒張壓 80–89</div></div>
+          </div>
+          <div class="legend-item" style="background:var(--stage2-bg)">
+            <span class="bp-level bp-stage2" style="width:80px;justify-content:center">● 第二期</span>
+            <div class="legend-main"><div class="legend-name" style="color:var(--stage2)">高血壓 第二期</div><div class="legend-range" style="color:var(--stage2)">收縮壓 ≥140　舒張壓 ≥90</div></div>
+          </div>
+          <div class="legend-item" style="background:var(--crisis-bg)">
+            <span class="bp-level bp-crisis" style="width:80px;justify-content:center">● 危險期</span>
+            <div class="legend-main"><div class="legend-name" style="color:var(--crisis)">高血壓危險期</div><div class="legend-range" style="color:var(--crisis)">收縮壓 &gt;180　及/或舒張壓 &gt;120</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🚨 緊急警示</div>
+        <div style="background:var(--crisis-bg);border:1px solid rgba(220,38,38,.3);border-radius:12px;padding:14px;margin-bottom:12px">
+          <div style="color:var(--crisis);font-weight:800;font-size:14px;margin-bottom:6px">⚠️ 請立即就醫</div>
+          <div style="font-size:13px;line-height:1.7">收縮壓 &gt; <strong>180</strong> 及/或 舒張壓 &gt; <strong>120 mm Hg</strong></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.8">若伴隨胸痛、呼吸困難、視力模糊或頭痛劇烈，請立即撥打 <strong style="color:var(--text)">119</strong>。</div>
+      </div>
+      <div class="card">
+        <div class="card-title">💡 量測注意事項</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+          <li style="display:flex;gap:10px;font-size:13px;line-height:1.5"><span>🕐</span><span>每天固定時間，建議早晨起床後及晚間就寢前各一次</span></li>
+          <li style="display:flex;gap:10px;font-size:13px;line-height:1.5"><span>🪑</span><span>量測前靜坐休息至少 5 分鐘</span></li>
+          <li style="display:flex;gap:10px;font-size:13px;line-height:1.5"><span>☕</span><span>量測前 30 分鐘避免抽菸、喝咖啡或劇烈運動</span></li>
+          <li style="display:flex;gap:10px;font-size:13px;line-height:1.5"><span>💪</span><span>手臂與心臟同高，袖口不要過緊</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── BOTTOM NAV ── -->
+<div class="bottomnav" id="bottomnav">
+  <div class="bnav-item active" onclick="showView('dashboard')"><div class="bnav-icon">📊</div><div class="bnav-label">總覽</div></div>
+  <div class="bnav-item" onclick="showView('record')"><div class="bnav-icon">📝</div><div class="bnav-label">記錄</div></div>
+  <div class="bnav-item" onclick="showView('calendar')"><div class="bnav-icon">📅</div><div class="bnav-label">日曆</div></div>
+  <div class="bnav-item" onclick="showView('summary')"><div class="bnav-icon">📈</div><div class="bnav-label">趨勢</div></div>
+  <div class="bnav-item" onclick="showView('guide')"><div class="bnav-icon">ℹ️</div><div class="bnav-label">指南</div></div>
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增血壓記錄</div>
+    <div class="modal-sub">請填寫量測數據</div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">成員</div><select class="form-input" id="m-member"></select></div>
+      <div class="form-group"><div class="form-label">日期</div><input type="date" class="form-input" id="m-date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">收縮壓（上）</div><input type="number" class="form-input" id="m-sys" placeholder="mm Hg" inputmode="numeric" oninput="updateModalPreview()"></div>
+      <div class="form-group"><div class="form-label">舒張壓（下）</div><input type="number" class="form-input" id="m-dia" placeholder="mm Hg" inputmode="numeric" oninput="updateModalPreview()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">脈搏</div><input type="number" class="form-input" id="m-pulse" placeholder="次/分" inputmode="numeric"></div>
+      <div class="form-group"><div class="form-label">時間</div><select class="form-input" id="m-time"><option>早晨</option><option>中午</option><option>晚間</option><option>睡前</option></select></div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group"><div class="form-label">備註</div><input type="text" class="form-input" id="m-note" placeholder="例：運動後、用藥後..."></div>
+    </div>
+    <div class="preview-bp" id="modal-preview" style="display:none">
+      <div><div class="preview-lbl">收縮壓 / 舒張壓</div><div class="preview-num" id="modal-prev-nums">— / —</div></div>
+      <div id="modal-prev-level"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveModalRecord()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MEMBERS=[
+  {id:1,name:'爸爸',emoji:'👨',color:'#3b82f6',bg:'rgba(59,130,246,.2)'},
+  {id:2,name:'媽媽',emoji:'👩',color:'#ec4899',bg:'rgba(236,72,153,.2)'},
+  {id:3,name:'待新增',emoji:'➕',color:'#4b5563',bg:'rgba(75,85,99,.12)',blank:true},
+  {id:4,name:'待新增',emoji:'➕',color:'#4b5563',bg:'rgba(75,85,99,.12)',blank:true},
+  {id:5,name:'待新增',emoji:'➕',color:'#4b5563',bg:'rgba(75,85,99,.12)',blank:true},
+];
+const today=new Date();
+let records=JSON.parse(localStorage.getItem('bp_records_v2')||'[]');
+let nextId=records.reduce((m,r)=>Math.max(m,r.id),0)+1;
+let calYear=today.getFullYear(),calMonth=today.getMonth(),calMemberId=1,activeView='dashboard';
+function saveData(){localStorage.setItem('bp_records_v2',JSON.stringify(records));}
+
+/* ── BP classify ── */
+function classify(sys,dia){
+  if(sys>180||dia>120)return{label:'高血壓危險期',cls:'bp-crisis',color:'var(--crisis)',sev:4};
+  if(sys>=140||dia>=90)return{label:'高血壓 第二期',cls:'bp-stage2',color:'var(--stage2)',sev:3};
+  if(sys>=130||dia>=80)return{label:'高血壓 第一期',cls:'bp-stage1',color:'var(--stage1)',sev:2};
+  if(sys>=120&&dia<80)return{label:'偏高血壓',cls:'bp-elevated',color:'var(--elevated)',sev:1};
+  return{label:'正常',cls:'bp-normal',color:'var(--normal)',sev:0};
+}
+function cardClass(sev){return['s-normal','s-elevated','s-stage1','s-stage2','s-crisis'][sev]||'s-normal';}
+
+/* ── Sidebar ── */
+let sidebarOpen=false;
+function toggleSidebar(){sidebarOpen?closeSidebar():openSidebar();}
+function openSidebar(){
+  sidebarOpen=true;
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar(){
+  sidebarOpen=false;
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+/* Desktop: sidebar toggle collapses it and expands main */
+function toggleDesktopSidebar(){
+  const sb=document.getElementById('sidebar');
+  const mn=document.getElementById('main');
+  const bn=document.getElementById('bottomnav');
+  if(sb.classList.contains('collapsed')){
+    sb.classList.remove('collapsed');mn.style.left='';bn.style.left='';
+  } else {
+    sb.classList.add('collapsed');mn.style.left='0';bn.style.left='0';
+  }
+}
+document.getElementById('sidebar').addEventListener('click',e=>{
+  if(window.innerWidth<900)return; // handled per nav-item
+});
+// On desktop, topbar-menu toggles desktop collapse; on mobile opens drawer
+document.querySelector('.topbar-menu').onclick=function(){
+  if(window.innerWidth>=900){toggleDesktopSidebar();}
+  else{toggleSidebar();}
+};
+
+/* ── View ── */
+function showView(v){
+  activeView=v;
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(el=>el.classList.remove('active'));
+  const idx=['dashboard','record','calendar','summary','guide'].indexOf(v);
+  document.querySelectorAll('.nav-item')[idx].classList.add('active');
+  document.querySelectorAll('.bnav-item')[idx].classList.add('active');
+  const titles={dashboard:['總覽儀表板','家庭血壓健康監測'],record:['記錄血壓','新增血壓數據'],calendar:['日曆檢視','按日期瀏覽記錄'],summary:['趨勢分析','血壓統計與趨勢'],guide:['血壓指南','分級與量測說明']};
+  document.getElementById('topbar-title').textContent=titles[v][0];
+  document.getElementById('topbar-sub').textContent=titles[v][1];
+  document.getElementById('content').scrollTop=0;
+  closeSidebar();
+  if(v==='dashboard')renderDashboard();
+  if(v==='record')renderRecordView();
+  if(v==='calendar')renderCalendarView();
+  if(v==='summary')renderSummary();
+}
+
+/* ── Sidebar members ── */
+function renderSidebarMembers(){
+  document.getElementById('sidebar-members').innerHTML=MEMBERS.map(m=>{
+    if(m.blank)return`<div class="member-btn" style="opacity:.35;cursor:default"><div class="member-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div style="font-size:12px;color:var(--muted)">${m.name}</div></div>`;
+    const last=records.filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    let badge='';
+    if(last){const cl=classify(last.sys,last.dia);const colors={'bp-normal':'var(--normal)','bp-elevated':'var(--elevated)','bp-stage1':'var(--stage1)','bp-stage2':'var(--stage2)','bp-crisis':'var(--crisis)'};badge=`<span class="member-badge" style="background:${colors[cl.cls]}22;color:${colors[cl.cls]}">${last.sys}/${last.dia}</span>`;}
+    return`<div class="member-btn" onclick="selectMember(${m.id})"><div class="member-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div style="font-size:13px">${m.name}</div>${badge}</div>`;
+  }).join('');
+}
+function selectMember(id){calMemberId=id;showView('calendar');document.getElementById('cal-member').value=id;renderCalendar();}
+
+/* ── Dashboard ── */
+function renderDashboard(){
+  document.getElementById('members-grid').innerHTML=MEMBERS.map(m=>{
+    if(m.blank)return`<div class="member-card" style="opacity:.3;border-style:dashed;cursor:default"><div class="mc-avatar" style="background:${m.bg};color:${m.color};font-size:18px">${m.emoji}</div><div class="mc-name" style="color:var(--muted);font-size:11px">${m.name}</div></div>`;
+    const recs=records.filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date));
+    const last=recs[0];
+    let bpNum='—',lvl='';
+    if(last){bpNum=`${last.sys}/${last.dia}`;const cl=classify(last.sys,last.dia);lvl=`<span class="bp-level ${cl.cls}" style="font-size:10px">${cl.label}</span>`;}
+    return`<div class="member-card" onclick="selectMember(${m.id})"><div class="mc-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div><div class="mc-name">${m.name}</div><div class="mc-bp" style="color:${m.color}">${bpNum}</div>${lvl}</div>`;
+  }).join('');
+
+  const todayStr=today.toISOString().split('T')[0];
+  const todayRecs=records.filter(r=>r.date===todayStr);
+  const sumEl=document.getElementById('today-summary');
+  if(!todayRecs.length){sumEl.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:8px 0">今日尚無記錄</div>`;}
+  else sumEl.innerHTML=todayRecs.map(r=>{const m=MEMBERS.find(x=>x.id===r.memberId);const cl=classify(r.sys,r.dia);return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div class="member-avatar" style="background:${m.bg};color:${m.color};width:32px;height:32px;font-size:13px">${m.emoji}</div><div style="flex:1"><div style="font-weight:600;font-size:13px">${m.name}</div><div style="color:var(--muted);font-size:11px">${r.time}</div></div><div style="font-family:'DM Mono',monospace;font-weight:700;font-size:15px">${r.sys}/${r.dia}</div><span class="bp-level ${cl.cls}">${cl.label}</span></div>`;}).join('');
+
+  const alertEl=document.getElementById('alerts-panel');
+  const warnings=[];
+  MEMBERS.filter(m=>!m.blank).forEach(m=>{const recs=records.filter(r=>r.memberId===m.id).sort((a,b)=>b.date.localeCompare(a.date));if(!recs.length)return;const last=recs[0];const cl=classify(last.sys,last.dia);if(cl.sev>=3)warnings.push({m,last,cl});});
+  if(!warnings.length)alertEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--normal-bg);border-radius:10px;font-size:13px;color:var(--normal)">✅ 所有成員血壓均在可接受範圍內</div>`;
+  else alertEl.innerHTML=warnings.map(w=>`<div style="padding:12px;background:var(--crisis-bg);border:1px solid rgba(220,38,38,.3);border-radius:10px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span>${w.m.emoji}</span><span style="font-weight:700;font-size:13px">${w.m.name}</span><span class="bp-level ${w.cl.cls}">${w.cl.label}</span></div><div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--crisis)">${w.last.sys}/${w.last.dia} mmHg</div>${w.cl.sev===4?'<div style="font-size:12px;color:var(--crisis);margin-top:6px;font-weight:700">⚠️ 請立即諮詢醫師！</div>':''}</div>`).join('');
+}
+
+/* ── Record ── */
+function populateMemberSelect(id){const sel=document.getElementById(id);if(!sel)return;sel.innerHTML=MEMBERS.filter(m=>!m.blank).map(m=>`<option value="${m.id}">${m.emoji} ${m.name}</option>`).join('');}
+function renderRecordView(){
+  populateMemberSelect('rec-member');
+  document.getElementById('rec-date').value=today.toISOString().split('T')[0];
+  renderRecentTable();
+}
+function renderRecentTable(){
+  const sorted=[...records].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30);
+  const el=document.getElementById('recent-records');
+  if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px">尚無記錄</div>';return;}
+  el.innerHTML=`<table class="records-table"><thead><tr><th>成員</th><th>日期</th><th>血壓</th><th>狀態</th></tr></thead><tbody>${sorted.map(r=>{const m=MEMBERS.find(x=>x.id===r.memberId);const cl=classify(r.sys,r.dia);return`<tr><td>${m.emoji} ${m.name}</td><td style="color:var(--muted)">${r.date.slice(5)} ${r.time}</td><td class="bp-value">${r.sys}/${r.dia}</td><td><span class="bp-level ${cl.cls}" style="font-size:10px">${cl.label}</span></td></tr>`;}).join('')}</tbody></table>`;
+}
+function saveRecord(){
+  const memberId=parseInt(document.getElementById('rec-member').value);
+  const date=document.getElementById('rec-date').value;
+  const sys=parseInt(document.getElementById('rec-sys').value);
+  const dia=parseInt(document.getElementById('rec-dia').value);
+  const pulse=parseInt(document.getElementById('rec-pulse').value)||null;
+  const time=document.getElementById('rec-time').value;
+  const note=document.getElementById('rec-note').value;
+  if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
+  records.push({id:nextId++,memberId,date,sys,dia,pulse,time,note});
+  saveData();
+  ['rec-sys','rec-dia','rec-pulse','rec-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rec-preview').style.display='none';
+  renderRecentTable();renderSidebarMembers();showToast('✅ 記錄已儲存');
+}
+
+/* ── Modal ── */
+function openModal(){
+  populateMemberSelect('m-member');
+  document.getElementById('m-date').value=today.toISOString().split('T')[0];
+  ['m-sys','m-dia','m-pulse','m-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modal-preview').style.display='none';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function updateModalPreview(){
+  const sys=parseInt(document.getElementById('m-sys').value),dia=parseInt(document.getElementById('m-dia').value);
+  if(isNaN(sys)||isNaN(dia)){document.getElementById('modal-preview').style.display='none';return;}
+  const cl=classify(sys,dia);
+  document.getElementById('modal-prev-nums').textContent=`${sys} / ${dia}`;
+  document.getElementById('modal-prev-level').innerHTML=`<span class="bp-level ${cl.cls}">${cl.label}</span>`;
+  document.getElementById('modal-preview').style.display='flex';
+}
+function saveModalRecord(){
+  const memberId=parseInt(document.getElementById('m-member').value);
+  const date=document.getElementById('m-date').value;
+  const sys=parseInt(document.getElementById('m-sys').value);
+  const dia=parseInt(document.getElementById('m-dia').value);
+  const pulse=parseInt(document.getElementById('m-pulse').value)||null;
+  const time=document.getElementById('m-time').value;
+  const note=document.getElementById('m-note').value;
+  if(!date||isNaN(sys)||isNaN(dia)){showToast('❌ 請填寫日期及血壓數值');return;}
+  records.push({id:nextId++,memberId,date,sys,dia,pulse,time,note});
+  saveData();closeModal();renderSidebarMembers();
+  if(activeView==='dashboard')renderDashboard();
+  if(activeView==='record')renderRecentTable();
+  if(activeView==='calendar')renderCalendar();
+  if(activeView==='summary')renderSummary();
+  showToast('✅ 記錄已儲存');
+}
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))closeModal();});
+
+/* ── Calendar ── */
+function renderCalendarView(){populateMemberSelect('cal-member');document.getElementById('cal-member').value=calMemberId;renderCalendar();}
+function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function renderCalendar(){
+  calMemberId=parseInt(document.getElementById('cal-member').value)||calMemberId;
+  const mn=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  document.getElementById('month-title').textContent=`${calYear} 年 ${mn[calMonth]}`;
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const todayStr=today.toISOString().split('T')[0];
+  const rbd={};records.filter(r=>r.memberId===calMemberId).forEach(r=>{if(!rbd[r.date])rbd[r.date]=[];rbd[r.date].push(r);});
+  let html=['日','一','二','三','四','五','六'].map(d=>`<div class="cal-header">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const recs=rbd[ds]||[];
+    let dot='';
+    if(recs.length){const worst=recs.reduce((a,b)=>classify(a.sys,a.dia).sev>classify(b.sys,b.dia).sev?a:b);const cl=classify(worst.sys,worst.dia);dot=`<div class="cal-dot" style="background:${cl.color}"></div>`;}
+    html+=`<div class="cal-day ${ds===todayStr?'today':''}" onclick="showDayDetail('${ds}')"><div class="cal-day-num">${d}</div>${dot}</div>`;
+  }
+  document.getElementById('calendar-grid').innerHTML=html;
+}
+function showDayDetail(dateStr){
+  document.querySelectorAll('.cal-day').forEach(el=>el.classList.remove('selected'));
+  event.currentTarget&&event.currentTarget.classList.add('selected');
+  const recs=records.filter(r=>r.memberId===calMemberId&&r.date===dateStr);
+  const m=MEMBERS.find(x=>x.id===calMemberId);
+  document.getElementById('cal-detail-title').textContent=`📌 ${dateStr} — ${m.name}`;
+  if(!recs.length){document.getElementById('cal-detail-content').innerHTML=`<div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">當天無記錄</div>`;return;}
+  document.getElementById('cal-detail-content').innerHTML=recs.map(r=>{const cl=classify(r.sys,r.dia);return`<div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:var(--muted)">🕐 ${r.time}</span><span class="bp-level ${cl.cls}">${cl.label}</span></div><div style="display:flex;gap:20px"><div><div style="font-size:10px;color:var(--muted)">收縮壓</div><div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700">${r.sys}</div></div><div><div style="font-size:10px;color:var(--muted)">舒張壓</div><div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700">${r.dia}</div></div>${r.pulse?`<div><div style="font-size:10px;color:var(--muted)">脈搏</div><div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700">${r.pulse}</div></div>`:''}</div>${r.note?`<div style="font-size:12px;color:var(--muted);margin-top:8px">備註：${r.note}</div>`:''}</div>`;}).join('');
+}
+
+/* ── Summary ── */
+function renderSummary(){
+  populateMemberSelect('sum-member');
+  const memberId=parseInt(document.getElementById('sum-member').value)||1;
+  const period=parseInt(document.getElementById('sum-period').value)||30;
+  const cutoff=new Date(today);cutoff.setDate(cutoff.getDate()-period+1);
+  const cutoffStr=cutoff.toISOString().split('T')[0];
+  const recs=records.filter(r=>r.memberId===memberId&&r.date>=cutoffStr).sort((a,b)=>a.date.localeCompare(b.date));
+  const statsEl=document.getElementById('sum-stats');
+  if(!recs.length){statsEl.innerHTML=`<div style="color:var(--muted);grid-column:1/-1;font-size:13px;padding:4px">此期間無記錄</div>`;}
+  else{
+    const avgSys=Math.round(recs.reduce((a,r)=>a+r.sys,0)/recs.length);
+    const avgDia=Math.round(recs.reduce((a,r)=>a+r.dia,0)/recs.length);
+    const maxSys=Math.max(...recs.map(r=>r.sys));
+    const minSys=Math.min(...recs.map(r=>r.sys));
+    const cl=classify(avgSys,avgDia);
+    statsEl.innerHTML=`<div class="stat-card ${cardClass(cl.sev)}"><div class="stat-label">平均血壓</div><div class="stat-value" style="color:${cl.color}">${avgSys}/${avgDia}</div><div class="stat-desc"><span class="bp-level ${cl.cls}" style="font-size:10px">${cl.label}</span></div></div><div class="stat-card s-stage2"><div class="stat-label">最高</div><div class="stat-value">${maxSys}</div><div class="stat-desc">收縮壓 mmHg</div></div><div class="stat-card s-normal"><div class="stat-label">最低</div><div class="stat-value">${minSys}</div><div class="stat-desc">${recs.length} 筆記錄</div></div>`;
+  }
+  drawTrendChart(recs);
+  const tableEl=document.getElementById('sum-table');
+  if(!recs.length){tableEl.innerHTML='';return;}
+  tableEl.innerHTML=`<table class="records-table"><thead><tr><th>日期</th><th>時間</th><th>收縮/舒張</th><th>狀態</th></tr></thead><tbody>${[...recs].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{const cl=classify(r.sys,r.dia);return`<tr><td>${r.date.slice(5)}</td><td style="color:var(--muted)">${r.time}</td><td class="bp-value"><span style="color:#ef4444">${r.sys}</span>/<span style="color:#3b82f6">${r.dia}</span></td><td><span class="bp-level ${cl.cls}" style="font-size:10px">${cl.label}</span></td></tr>`;}).join('')}</tbody></table>`;
+}
+
+function drawTrendChart(recs){
+  const svg=document.getElementById('trend-chart');
+  if(!recs.length){svg.innerHTML='<text x="400" y="100" font-size="14" fill="rgba(107,127,163,0.6)" text-anchor="middle">尚無記錄</text>';return;}
+  const W=800,H=200,pad={t:20,b:30,l:38,r:12};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const all=[...recs.map(r=>r.sys),...recs.map(r=>r.dia)];
+  const minV=Math.min(...all)-10,maxV=Math.max(...all)+10;
+  const sy=v=>pad.t+cH-(v-minV)/(maxV-minV)*cH;
+  const sx=i=>pad.l+(recs.length===1?cW/2:i/(recs.length-1)*cW);
+  const nt=sy(120),nb=sy(80);
+  let out=`<rect x="${pad.l}" y="${nt}" width="${cW}" height="${Math.max(0,nb-nt)}" fill="rgba(34,197,94,.07)" rx="2"/>`;
+  for(let v=Math.ceil(minV/10)*10;v<=maxV;v+=10){const y=sy(v);out+=`<line x1="${pad.l}" y1="${y}" x2="${pad.l+cW}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1"/><text x="${pad.l-4}" y="${y+4}" font-size="9" fill="rgba(107,127,163,.7)" text-anchor="end">${v}</text>`;}
+  const mp=(arr,col)=>`<polyline points="${arr.map((v,i)=>`${sx(i)},${sy(v)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const md=(arr,col)=>arr.map((v,i)=>`<circle cx="${sx(i)}" cy="${sy(v)}" r="4" fill="${col}" stroke="var(--surface)" stroke-width="2"/>`).join('');
+  const step=Math.max(1,Math.ceil(recs.length/7));
+  let xl='';recs.forEach((r,i)=>{if(i%step===0||i===recs.length-1)xl+=`<text x="${sx(i)}" y="${H-4}" font-size="9" fill="rgba(107,127,163,.7)" text-anchor="middle">${r.date.slice(5)}</text>`;});
+  svg.innerHTML=out+mp(recs.map(r=>r.sys),'#ef4444')+mp(recs.map(r=>r.dia),'#3b82f6')+md(recs.map(r=>r.sys),'#ef4444')+md(recs.map(r=>r.dia),'#3b82f6')+xl;
+}
+
+/* ── Toast ── */
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+/* ── Live preview in record form ── */
+function updateRecPreview(){
+  const sys=parseInt(document.getElementById('rec-sys').value);
+  const dia=parseInt(document.getElementById('rec-dia').value);
+  if(!isNaN(sys)&&!isNaN(dia)){const cl=classify(sys,dia);document.getElementById('prev-nums').textContent=`${sys} / ${dia}`;document.getElementById('prev-level').innerHTML=`<span class="bp-level ${cl.cls}">${cl.label}</span>`;document.getElementById('rec-preview').style.display='flex';}
+  else document.getElementById('rec-preview').style.display='none';
+}
+document.getElementById('rec-sys').addEventListener('input',updateRecPreview);
+document.getElementById('rec-dia').addEventListener('input',updateRecPreview);
+
+/* ── Init ── */
+renderSidebarMembers();
+renderDashboard();
+</script>
+</body>
+</html>
